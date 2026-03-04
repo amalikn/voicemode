@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "com.failmode/voicemode",
-  "description": "Natural voice conversations for AI assistants - STT/TTS via MCP",
+  "description": "Voice interaction MCP for AI assistants: converse, service management, connect presence, diagnostics, config, provider registry, statistics, and local Whisper/Kokoro installers with cloud fallback.",
   "status": "active",
   "repository": {
     "url": "https://github.com/mbailey/voicemode",
@@ -66,6 +66,41 @@
           "format": "string",
           "is_secret": false,
           "name": "VOICEMODE_DISABLE_SILENCE_DETECTION"
+        },
+        {
+          "description": "VoiceMode data directory (deployment default: /Volumes/Data/_ai/mcp-data/voicemode)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "VOICEMODE_DATA_DIR"
+        },
+        {
+          "description": "VoiceMode log directory (deployment default: /Volumes/Data/_ai/mcp-data/voicemode/logs)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "VOICEMODE_LOG_DIR"
+        },
+        {
+          "description": "VoiceMode cache directory (deployment default: /Volumes/Data/_ai/mcp-data/voicemode/cache)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "VOICEMODE_CACHE_DIR"
+        },
+        {
+          "description": "Enable VoiceMode Connect (true/false)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "VOICEMODE_CONNECT_ENABLED"
+        },
+        {
+          "description": "VoiceMode Connect WebSocket URL",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "VOICEMODE_CONNECT_WS_URL"
         }
       ]
     }

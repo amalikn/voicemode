@@ -306,3 +306,10 @@ Auto-maintained release and operator update log for this sub-repo.
 | 2026-03-04T12:56:42.786296+00:00 | main | origin | `54304c081ee8` | chore: bump version to 8.4.0 for all packages |
 | 2026-03-04T12:56:42.786296+00:00 | main | origin | `16941f38b999` | docs: add Codex VoiceMode setup and first-run notes |
 | 2026-03-04T12:56:42.786296+00:00 | main | origin | `e4315dffc449` | docs: add revision history file |
+
+## 2026-03-05
+
+- Documented full VoiceMode MCP capabilities in README (conversation, service, connect, diagnostics, devices, provider registry, statistics, config, installers).
+- Updated server.json capability description and VOICEMODE data/log/cache deployment-default path descriptions.
+- Updated deployment notes in README and CLAUDE docs to reflect /Volumes/Data/_ai/mcp-data/voicemode runtime usage.
+- Added architecture draft: docs/architecture/codex-voice-prefill-draft-spec.md.

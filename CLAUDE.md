@@ -121,7 +121,7 @@ Services can be installed and managed through MCP tools, with automatic service 
 
 ## Logging
 
-Logs are stored in `~/.voicemode/`:
+Logs are stored in `/Volumes/Data/_ai/mcp-data/voicemode/` for this deployment:
 - `logs/conversations/` - Voice exchange history (JSONL)
 - `logs/events/` - Operational events and errors
 - `audio/` - Saved TTS/STT audio files

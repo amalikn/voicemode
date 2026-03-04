@@ -145,6 +145,26 @@ For manual setup, see the [Getting Started Guide](docs/tutorials/getting-started
 - **Smart silence detection** - stops recording when you stop speaking
 - **Privacy options** - run entirely locally or use cloud services
 
+## MCP Capabilities
+
+VoiceMode exposes the following MCP tool capabilities:
+
+- Conversation: `mcp__voicemode__converse`
+- Service management: `mcp__voicemode__service`
+- Connect presence/status: `mcp__voicemode__connect_status`
+- Diagnostics: `mcp__voicemode__voice_mode_info`, `mcp__voicemode__check_audio_dependencies`
+- Devices/voices: `mcp__voicemode__voice_status`, `mcp__voicemode__check_audio_devices`, `mcp__voicemode__list_tts_voices`
+- Provider registry: `mcp__voicemode__refresh_provider_registry`, `mcp__voicemode__get_provider_details`, `mcp__voicemode__voice_registry`
+- Statistics: `mcp__voicemode__voice_statistics`, `mcp__voicemode__voice_statistics_summary`, `mcp__voicemode__voice_statistics_recent`, `mcp__voicemode__voice_statistics_export`, `mcp__voicemode__voice_statistics_reset`
+- Configuration management: `mcp__voicemode__show_config_files`, `mcp__voicemode__list_config_keys`, `mcp__voicemode__config_reload`, `mcp__voicemode__update_config`
+- Local service installers: `mcp__voicemode__whisper_install`, `mcp__voicemode__whisper_uninstall`, `mcp__voicemode__whisper_model_install`, `mcp__voicemode__kokoro_install`, `mcp__voicemode__kokoro_uninstall`
+
+Operational behavior:
+
+- Uses local Whisper/Kokoro when available (default preference).
+- Falls back to OpenAI-compatible cloud providers when local services are unavailable and credentials exist.
+- Supports STT-only verification with `skip_tts=true` during TTS warmup/troubleshooting.
+
 ## Compatibility
 
 **Platforms:** Linux, macOS, Windows (WSL), NixOS
@@ -265,7 +285,7 @@ environment.systemPackages = [
 
 ```bash
 export VOICEMODE_SAVE_AUDIO=true
-# Files saved to ~/.voicemode/audio/YYYY/MM/
+# Files saved to /Volumes/Data/_ai/mcp-data/voicemode/audio/YYYY/MM/
 ```
 
 ## Documentation
@@ -274,6 +294,7 @@ export VOICEMODE_SAVE_AUDIO=true
 - [Configuration](docs/guides/configuration.md) - All environment variables
 - [Whisper Setup](docs/guides/whisper-setup.md) - Local speech-to-text
 - [Kokoro Setup](docs/guides/kokoro-setup.md) - Local text-to-speech
+- [Codex Voice Prefill Spec](docs/architecture/codex-voice-prefill-draft-spec.md) - Draft-prefill UX implementation plan for voice-to-compose flow
 - [Development Setup](docs/tutorials/development-setup.md) - Contributing guide
 
 Full documentation: [voice-mode.readthedocs.io](https://voice-mode.readthedocs.io)
