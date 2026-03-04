@@ -4,6 +4,7 @@ Auto-maintained release and operator update log for this sub-repo.
 
 | Recorded At (UTC) | Branch | Remote | Commit | Subject |
 |---|---|---|---|---|
+| 2026-03-05T02:35:00+00:00 | main | origin | `pending` | docs: add stable multi-client setup and launch-agent path fix |
 | 2026-03-04T12:44:53+00:00 | main | origin | `16941f3` | docs: add Codex VoiceMode setup and first-run notes |
 
 | 2026-03-04T12:56:42.786296+00:00 | main | origin | `2c67f746e745` | fix: suppress audioop deprecation warning for CLI commands |

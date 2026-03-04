@@ -137,6 +137,77 @@ Known issue (first run):
 
 For manual setup, see the [Getting Started Guide](docs/tutorials/getting-started.md).
 
+### Stable Multi-Client Setup (Codex, Claude Code, Local LLM MCP Clients)
+
+Use this when you run VoiceMode from multiple MCP clients and want one stable runtime/data layout.
+
+1. Use one shared data root:
+- `/Volumes/Data/_ai/mcp-data/voicemode`
+
+2. Keep home-path compatibility with a symlink:
+
+```bash
+mkdir -p /Volumes/Data/_ai/mcp-data/voicemode
+if [ -d "$HOME/.voicemode" ] && [ ! -L "$HOME/.voicemode" ]; then
+  mv "$HOME/.voicemode" "/Volumes/Data/_ai/mcp-data/voicemode-home-backup-$(date +%Y%m%d-%H%M%S)"
+fi
+ln -sfn /Volumes/Data/_ai/mcp-data/voicemode "$HOME/.voicemode"
+```
+
+3. Use explicit env paths in every client config:
+- `VOICEMODE_DATA_DIR=/Volumes/Data/_ai/mcp-data/voicemode`
+- `VOICEMODE_LOG_DIR=/Volumes/Data/_ai/mcp-data/voicemode/logs`
+- `VOICEMODE_CACHE_DIR=/Volumes/Data/_ai/mcp-data/voicemode/cache`
+- `VOICEMODE_PREFER_LOCAL=true`
+
+4. Use the same MCP server command everywhere:
+- `bash -lc "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"`
+
+Claude Code config snippet:
+
+```json
+{
+  "mcpServers": {
+    "voicemode": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"
+      ],
+      "env": {
+        "VOICEMODE_DATA_DIR": "/Volumes/Data/_ai/mcp-data/voicemode",
+        "VOICEMODE_LOG_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/logs",
+        "VOICEMODE_CACHE_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/cache",
+        "VOICEMODE_PREFER_LOCAL": "true"
+      }
+    }
+  }
+}
+```
+
+Generic local LLM MCP client snippet (JSON-style):
+
+```json
+{
+  "mcpServers": {
+    "voicemode": {
+      "command": "bash",
+      "args": [
+        "-lc",
+        "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"
+      ],
+      "env": {
+        "VOICEMODE_DATA_DIR": "/Volumes/Data/_ai/mcp-data/voicemode",
+        "VOICEMODE_LOG_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/logs",
+        "VOICEMODE_CACHE_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/cache",
+        "VOICEMODE_PREFER_LOCAL": "true"
+      }
+    }
+  }
+}
+```
+
 ## Features
 
 - **Natural conversations** - speak naturally, hear responses immediately
@@ -279,6 +350,29 @@ environment.systemPackages = [
 | UV not found | Run `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | OpenAI API error | Verify `OPENAI_API_KEY` is set correctly |
 | No audio output | Check system audio settings and available devices |
+| `service status voicemode` shows "not available" but Whisper/Kokoro are up | Check `~/.voicemode/logs/serve/serve.err.log`; if it says `exec: voicemode: not found`, fix launch path (below). |
+
+### Launch-Agent PATH Fix (macOS)
+
+If the `com.voicemode.serve` launch agent crash-loops with `exec: voicemode: not found`, apply:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+ln -sfn /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode/.venv/bin/voicemode "$HOME/.local/bin/voicemode"
+
+SCRIPT="$HOME/.voicemode/services/voicemode/bin/start-voicemode-serve.sh"
+sed -i '' 's#exec voicemode serve#exec /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode/.venv/bin/voicemode serve#' "$SCRIPT"
+
+launchctl bootout gui/$(id -u) "$HOME/Library/LaunchAgents/com.voicemode.serve.plist" 2>/dev/null || true
+launchctl bootstrap gui/$(id -u) "$HOME/Library/LaunchAgents/com.voicemode.serve.plist"
+```
+
+Validate:
+
+```bash
+uv run voicemode service status voicemode
+lsof -nP -iTCP:8765 -sTCP:LISTEN
+```
 
 
 ### Save Audio for Debugging
