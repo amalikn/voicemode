@@ -64,6 +64,77 @@ export OPENAI_API_KEY=your-openai-key
 claude converse
 ```
 
+### Option 3: Codex (Repo-pinned MCP, Recommended)
+
+Use this when you want VoiceMode tools directly in Codex without the Claude plugin.
+
+```bash
+# 1) Install system dependencies (macOS)
+brew install ffmpeg node portaudio
+
+# 2) Install UV package manager (if needed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 3) Install VoiceMode + local voice service dependencies
+uvx voice-mode-install
+```
+
+Add this to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.voicemode]
+command = "bash"
+args = ["-lc", "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"]
+startup_timeout_sec = 120
+
+[mcp_servers.voicemode.env]
+VOICEMODE_DATA_DIR = "/Volumes/Data/_ai/mcp-data/voicemode"
+VOICEMODE_LOG_DIR = "/Volumes/Data/_ai/mcp-data/voicemode/logs"
+VOICEMODE_CACHE_DIR = "/Volumes/Data/_ai/mcp-data/voicemode/cache"
+VOICEMODE_PREFER_LOCAL = "true"
+# OPENAI_API_KEY = "your-openai-key"
+```
+
+Then:
+
+```bash
+# 4) Restart Codex and verify MCP registration
+codex mcp list
+
+# 5) Install/start local services (one-time install, then start)
+cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode
+uv run voicemode service install whisper
+uv run voicemode service install kokoro
+uv run voicemode service start whisper
+uv run voicemode service start kokoro
+```
+
+In Codex, test tool calls:
+
+- `mcp__voicemode__service` with `service_name="whisper"` and `action="status"`
+- `mcp__voicemode__service` with `service_name="kokoro"` and `action="status"`
+- `mcp__voicemode__converse` with `message="VoiceMode test"` and `wait_for_response="true"`
+
+If STT/TTS fails on macOS, check microphone permissions for your terminal app in:
+`System Settings -> Privacy & Security -> Microphone`
+
+`uvx` MCP variant (instead of repo-pinned):
+
+```toml
+[mcp_servers.voicemode]
+command = "bash"
+args = ["-lc", "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && exec uvx --refresh voice-mode"]
+startup_timeout_sec = 120
+```
+
+Known issue (first run):
+
+- Kokoro may stay in `starting up` for a few minutes on first boot while model assets are prepared.
+- During this window, `mcp__voicemode__converse` may fail TTS unless `OPENAI_API_KEY` is set for fallback.
+- Workarounds:
+  - Wait for `mcp__voicemode__service` (`service_name="kokoro"`, `action="status"`) to report running.
+  - Or call `mcp__voicemode__converse` with `skip_tts="true"` to test STT-only flow immediately.
+
 For manual setup, see the [Getting Started Guide](docs/tutorials/getting-started.md).
 
 ## Features
