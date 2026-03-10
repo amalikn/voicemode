@@ -314,3 +314,6 @@ Auto-maintained release and operator update log for this sub-repo.
 - Updated server.json capability description and VOICEMODE data/log/cache deployment-default path descriptions.
 - Updated deployment notes in README and CLAUDE docs to reflect /Volumes/Data/_ai/mcp-data/voicemode runtime usage.
 - Added architecture draft: docs/architecture/codex-voice-prefill-draft-spec.md.
+| 2026-03-10T07:44:53.480840+00:00 | main | origin | `8a466940b0d7` | docs: update voicemode capabilities and data-path guidance |
+| 2026-03-10T07:44:53.480840+00:00 | main | origin | `345e0338dfb4` | docs: add stable cross-client setup and launchd fix |
+| 2026-03-10T07:44:53.480840+00:00 | main | origin | `4fc23c5f5047` | docs: capture continuous conversation pattern and operator profile |
