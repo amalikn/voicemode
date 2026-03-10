@@ -208,6 +208,31 @@ Generic local LLM MCP client snippet (JSON-style):
 }
 ```
 
+### Operator Preference Capture (Continuous Session Pattern)
+
+If you want long-running voice sessions without manually re-triggering every turn, keep the agent in a loop that repeatedly calls `converse` with `wait_for_response=true` until you explicitly say `stop voice` or `exit`.
+
+Example operational pattern:
+
+1. Agent sends one `converse` call with `wait_for_response=true`.
+2. User responds by voice.
+3. Agent executes requested work.
+4. Agent sends the next `converse` call and waits again.
+5. Loop ends only on explicit stop command.
+
+This avoids confusion where a single `converse` call ends after one response cycle.
+
+Recommended local profile values (stored in `VOICEMODE_DATA_DIR/voicemode.env`):
+
+```env
+VOICEMODE_DISABLE_SILENCE_DETECTION=false
+VOICEMODE_DEFAULT_LISTEN_DURATION=300.0
+VOICEMODE_VAD_AGGRESSIVENESS=1
+VOICEMODE_SILENCE_THRESHOLD_MS=1200
+```
+
+These values are tuned for longer user responses and fewer premature cutoffs.
+
 ## Features
 
 - **Natural conversations** - speak naturally, hear responses immediately
