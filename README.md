@@ -84,13 +84,13 @@ Add this to `~/.codex/config.toml`:
 ```toml
 [mcp_servers.voicemode]
 command = "bash"
-args = ["-lc", "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"]
+args = ["-lc", "mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"]
 startup_timeout_sec = 120
 
 [mcp_servers.voicemode.env]
-VOICEMODE_DATA_DIR = "/Volumes/Data/_ai/mcp-data/voicemode"
-VOICEMODE_LOG_DIR = "/Volumes/Data/_ai/mcp-data/voicemode/logs"
-VOICEMODE_CACHE_DIR = "/Volumes/Data/_ai/mcp-data/voicemode/cache"
+VOICEMODE_DATA_DIR = "/Volumes/Data/_ai/_mcp/mcp-data/voicemode"
+VOICEMODE_LOG_DIR = "/Volumes/Data/_ai/_mcp/mcp-data/voicemode/logs"
+VOICEMODE_CACHE_DIR = "/Volumes/Data/_ai/_mcp/mcp-working-cache/voicemode/cache"
 VOICEMODE_PREFER_LOCAL = "true"
 # OPENAI_API_KEY = "your-openai-key"
 ```
@@ -123,7 +123,7 @@ If STT/TTS fails on macOS, check microphone permissions for your terminal app in
 ```toml
 [mcp_servers.voicemode]
 command = "bash"
-args = ["-lc", "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && exec uvx --refresh voice-mode"]
+args = ["-lc", "mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode && exec uvx --refresh voice-mode"]
 startup_timeout_sec = 120
 ```
 
@@ -142,26 +142,26 @@ For manual setup, see the [Getting Started Guide](docs/tutorials/getting-started
 Use this when you run VoiceMode from multiple MCP clients and want one stable runtime/data layout.
 
 1. Use one shared data root:
-- `/Volumes/Data/_ai/mcp-data/voicemode`
+- `/Volumes/Data/_ai/_mcp/mcp-data/voicemode`
 
 2. Keep home-path compatibility with a symlink:
 
 ```bash
-mkdir -p /Volumes/Data/_ai/mcp-data/voicemode
+mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode
 if [ -d "$HOME/.voicemode" ] && [ ! -L "$HOME/.voicemode" ]; then
-  mv "$HOME/.voicemode" "/Volumes/Data/_ai/mcp-data/voicemode-home-backup-$(date +%Y%m%d-%H%M%S)"
+  mv "$HOME/.voicemode" "/Volumes/Data/_ai/_mcp/mcp-data/voicemode-home-backup-$(date +%Y%m%d-%H%M%S)"
 fi
-ln -sfn /Volumes/Data/_ai/mcp-data/voicemode "$HOME/.voicemode"
+ln -sfn /Volumes/Data/_ai/_mcp/mcp-data/voicemode "$HOME/.voicemode"
 ```
 
 3. Use explicit env paths in every client config:
-- `VOICEMODE_DATA_DIR=/Volumes/Data/_ai/mcp-data/voicemode`
-- `VOICEMODE_LOG_DIR=/Volumes/Data/_ai/mcp-data/voicemode/logs`
-- `VOICEMODE_CACHE_DIR=/Volumes/Data/_ai/mcp-data/voicemode/cache`
+- `VOICEMODE_DATA_DIR=/Volumes/Data/_ai/_mcp/mcp-data/voicemode`
+- `VOICEMODE_LOG_DIR=/Volumes/Data/_ai/_mcp/mcp-data/voicemode/logs`
+- `VOICEMODE_CACHE_DIR=/Volumes/Data/_ai/_mcp/mcp-working-cache/voicemode/cache`
 - `VOICEMODE_PREFER_LOCAL=true`
 
 4. Use the same MCP server command everywhere:
-- `bash -lc "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"`
+- `bash -lc "mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"`
 
 Claude Code config snippet:
 
@@ -173,12 +173,12 @@ Claude Code config snippet:
       "command": "bash",
       "args": [
         "-lc",
-        "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"
+        "mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"
       ],
       "env": {
-        "VOICEMODE_DATA_DIR": "/Volumes/Data/_ai/mcp-data/voicemode",
-        "VOICEMODE_LOG_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/logs",
-        "VOICEMODE_CACHE_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/cache",
+        "VOICEMODE_DATA_DIR": "/Volumes/Data/_ai/_mcp/mcp-data/voicemode",
+        "VOICEMODE_LOG_DIR": "/Volumes/Data/_ai/_mcp/mcp-data/voicemode/logs",
+        "VOICEMODE_CACHE_DIR": "/Volumes/Data/_ai/_mcp/mcp-working-cache/voicemode/cache",
         "VOICEMODE_PREFER_LOCAL": "true"
       }
     }
@@ -195,12 +195,12 @@ Generic local LLM MCP client snippet (JSON-style):
       "command": "bash",
       "args": [
         "-lc",
-        "mkdir -p /Volumes/Data/_ai/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"
+        "mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"
       ],
       "env": {
-        "VOICEMODE_DATA_DIR": "/Volumes/Data/_ai/mcp-data/voicemode",
-        "VOICEMODE_LOG_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/logs",
-        "VOICEMODE_CACHE_DIR": "/Volumes/Data/_ai/mcp-data/voicemode/cache",
+        "VOICEMODE_DATA_DIR": "/Volumes/Data/_ai/_mcp/mcp-data/voicemode",
+        "VOICEMODE_LOG_DIR": "/Volumes/Data/_ai/_mcp/mcp-data/voicemode/logs",
+        "VOICEMODE_CACHE_DIR": "/Volumes/Data/_ai/_mcp/mcp-working-cache/voicemode/cache",
         "VOICEMODE_PREFER_LOCAL": "true"
       }
     }
@@ -404,7 +404,7 @@ lsof -nP -iTCP:8765 -sTCP:LISTEN
 
 ```bash
 export VOICEMODE_SAVE_AUDIO=true
-# Files saved to /Volumes/Data/_ai/mcp-data/voicemode/audio/YYYY/MM/
+# Files saved to /Volumes/Data/_ai/_mcp/mcp-data/voicemode/audio/YYYY/MM/
 ```
 
 ## Documentation
@@ -433,3 +433,18 @@ MIT - A [Failmode](https://failmode.com) Project
 
 ---
 mcp-name: com.failmode/voicemode
+
+## Local Customization Tracking
+- Local machine-specific integration, client wiring, and operational state are tracked under the external data root.
+- Local metadata path: `/Volumes/Data/_ai/_mcp/mcp-data/<name>/meta`
+- Repo-side capability contract is in `docs/local-capability/`.
+- Secrets are never stored in repo docs; only variable names and loading locations are documented.
+
+## Externalized .venv
+
+Repo path ".venv\" is a symlink to canonical cache location under "/Volumes/Data/_ai/_mcp/mcp-working-cache/voicemode/.venv\" to reduce repo-local mutable environment state.
+
+## Local Enhancements Capture (2026-03-13)
+- Captured current local changes, configuration updates, and operational enhancements for GitHub publication.
+- Includes synchronization with sub-repo link updates where applicable.
+- Cross-reference local docs and capability notes added in this repository.

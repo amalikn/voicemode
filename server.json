@@ -68,21 +68,21 @@
           "name": "VOICEMODE_DISABLE_SILENCE_DETECTION"
         },
         {
-          "description": "VoiceMode data directory (deployment default: /Volumes/Data/_ai/mcp-data/voicemode)",
+          "description": "VoiceMode data directory (deployment default: /Volumes/Data/_ai/_mcp/mcp-data/voicemode)",
           "is_required": false,
           "format": "string",
           "is_secret": false,
           "name": "VOICEMODE_DATA_DIR"
         },
         {
-          "description": "VoiceMode log directory (deployment default: /Volumes/Data/_ai/mcp-data/voicemode/logs)",
+          "description": "VoiceMode log directory (deployment default: /Volumes/Data/_ai/_mcp/mcp-data/voicemode/logs)",
           "is_required": false,
           "format": "string",
           "is_secret": false,
           "name": "VOICEMODE_LOG_DIR"
         },
         {
-          "description": "VoiceMode cache directory (deployment default: /Volumes/Data/_ai/mcp-data/voicemode/cache)",
+          "description": "VoiceMode cache directory (deployment default: /Volumes/Data/_ai/_mcp/mcp-working-cache/voicemode/cache)",
           "is_required": false,
           "format": "string",
           "is_secret": false,
