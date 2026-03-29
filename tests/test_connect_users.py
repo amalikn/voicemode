@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from voice_mode.connect.types import Presence, UserInfo
-from voice_mode.connect.users import UserManager
+from python_voicemode.connect.types import Presence, UserInfo
+from python_voicemode.connect.users import UserManager
 
 
 @pytest.fixture
@@ -68,7 +68,7 @@ class TestAdd:
         assert user.last_seen is not None
 
     def test_with_subscribe_team(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         user = manager.add("cora", subscribe_team="my-team")
@@ -134,7 +134,7 @@ class TestGet:
         assert user is None
 
     def test_detects_subscribed_team(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora", subscribe_team="my-team")
@@ -146,7 +146,7 @@ class TestGet:
 
 class TestSubscribe:
     def test_creates_symlink(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora")
@@ -158,7 +158,7 @@ class TestSubscribe:
         assert "team-lead.json" in str(target)
 
     def test_creates_target_parent_dir(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora")
@@ -168,7 +168,7 @@ class TestSubscribe:
         assert inboxes_dir.is_dir()
 
     def test_replaces_stale_symlink(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora")
@@ -183,7 +183,7 @@ class TestSubscribe:
         assert "new-team" in str(symlink.readlink())
 
     def test_handles_unexpected_file(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora")
@@ -202,7 +202,7 @@ class TestSubscribe:
         assert stale_files[0].read_text() == "unexpected content"
 
     def test_noops_when_already_correct(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora")
@@ -219,7 +219,7 @@ class TestSubscribe:
 
 class TestUnsubscribe:
     def test_removes_symlink(self, manager, users_dir, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora", subscribe_team="my-team")
@@ -236,7 +236,7 @@ class TestUnsubscribe:
 
 class TestIsSubscribed:
     def test_true_when_subscribed(self, manager, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora", subscribe_team="my-team")
@@ -259,7 +259,7 @@ class TestGetPresence:
         assert manager.get_presence("cora") == Presence.ONLINE
 
     def test_available_when_subscribed(self, manager, teams_dir, monkeypatch):
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         monkeypatch.setattr(users_mod, "CLAUDE_TEAMS_DIR", teams_dir)
 
         manager.add("cora", subscribe_team="my-team")

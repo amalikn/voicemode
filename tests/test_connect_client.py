@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from voice_mode.connect.client import ConnectClient, DeviceInfo, get_client
-from voice_mode.connect.types import ConnectState
-from voice_mode.connect.users import UserManager
+from python_voicemode.connect.client import ConnectClient, DeviceInfo, get_client
+from python_voicemode.connect.types import ConnectState
+from python_voicemode.connect.users import UserManager
 
 
 @pytest.fixture
@@ -119,7 +119,7 @@ class TestConnectClientInit:
 class TestConnectClientConnect:
     @pytest.mark.asyncio
     async def test_connect_disabled(self, client):
-        with patch("voice_mode.connect.client.connect_config") as mock_config:
+        with patch("python_voicemode.connect.client.connect_config") as mock_config:
             mock_config.is_enabled.return_value = False
             await client.connect()
 
@@ -129,8 +129,8 @@ class TestConnectClientConnect:
     @pytest.mark.asyncio
     async def test_connect_no_credentials(self, client):
         with (
-            patch("voice_mode.connect.client.connect_config") as mock_config,
-            patch("voice_mode.connect.client.asyncio") as mock_asyncio,
+            patch("python_voicemode.connect.client.connect_config") as mock_config,
+            patch("python_voicemode.connect.client.asyncio") as mock_asyncio,
         ):
             mock_config.is_enabled.return_value = True
             mock_asyncio.to_thread = AsyncMock(return_value=None)
@@ -141,8 +141,8 @@ class TestConnectClientConnect:
     @pytest.mark.asyncio
     async def test_connect_auth_error(self, client):
         with (
-            patch("voice_mode.connect.client.connect_config") as mock_config,
-            patch("voice_mode.connect.client.asyncio") as mock_asyncio,
+            patch("python_voicemode.connect.client.connect_config") as mock_config,
+            patch("python_voicemode.connect.client.asyncio") as mock_asyncio,
         ):
             mock_config.is_enabled.return_value = True
             mock_asyncio.to_thread = AsyncMock(side_effect=Exception("auth failed"))
@@ -239,7 +239,7 @@ class TestHandleMessage:
         }
         await client._handle_message(msg)
 
-        from voice_mode.connect.messaging import read_inbox
+        from python_voicemode.connect.messaging import read_inbox
 
         messages = read_inbox(user_manager._user_dir("cora"))
         assert len(messages) == 1
@@ -264,7 +264,7 @@ class TestHandleUserMessageDelivery:
         }
         await client._handle_user_message_delivery(data)
 
-        from voice_mode.connect.messaging import read_inbox
+        from python_voicemode.connect.messaging import read_inbox
 
         cora_msgs = read_inbox(user_manager._user_dir("cora"))
         echo_msgs = read_inbox(user_manager._user_dir("echo"))
@@ -280,7 +280,7 @@ class TestHandleUserMessageDelivery:
         data = {"text": "Hello!", "from": "user"}
         await client._handle_user_message_delivery(data)
 
-        from voice_mode.connect.messaging import read_inbox
+        from python_voicemode.connect.messaging import read_inbox
 
         messages = read_inbox(user_manager._user_dir("cora"))
         assert len(messages) == 1
@@ -291,7 +291,7 @@ class TestHandleUserMessageDelivery:
         data = {"text": "   ", "from": "user"}
         await client._handle_user_message_delivery(data)
 
-        from voice_mode.connect.messaging import read_inbox
+        from python_voicemode.connect.messaging import read_inbox
 
         messages = read_inbox(user_manager._user_dir("cora"))
         assert len(messages) == 0
@@ -308,7 +308,7 @@ class TestHandleUserMessageDelivery:
         data = {"text": "test", "from": "user"}
         await client._handle_user_message_delivery(data)
 
-        from voice_mode.connect.messaging import read_inbox
+        from python_voicemode.connect.messaging import read_inbox
 
         messages = read_inbox(user_manager._user_dir("cora"))
         assert messages[0]["source"] == "gateway"
@@ -434,7 +434,7 @@ class TestGetStatusText:
 
 class TestGetClient:
     def test_returns_singleton(self):
-        import voice_mode.connect.client as client_module
+        import python_voicemode.connect.client as client_module
 
         # Reset singleton
         client_module._client = None
@@ -449,7 +449,7 @@ class TestGetClient:
         client_module._client = None
 
     def test_creates_with_host(self):
-        import voice_mode.connect.client as client_module
+        import python_voicemode.connect.client as client_module
 
         client_module._client = None
 

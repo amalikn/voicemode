@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- com.voicemode.ollama-voice.plist v1.0.0 -->
+<!-- Template rendered by scripts/start-ollama-voice.sh --install-launchagent -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.voicemode.ollama-voice</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>__REPO_ROOT__/scripts/start-ollama-voice.sh</string>
+        <string>--serve</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>WorkingDirectory</key>
+    <string>__REPO_ROOT__</string>
+    <key>StandardOutPath</key>
+    <string>__DATA_ROOT__/logs/ollama-voice.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>__DATA_ROOT__/logs/ollama-voice.err.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>__HOME__/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>VOICEMODE_OLLAMA_VOICE_DATA_DIR</key>
+        <string>__DATA_ROOT__</string>
+        <key>VOICEMODE_OLLAMA_VOICE_HOST</key>
+        <string>127.0.0.1</string>
+        <key>VOICEMODE_OLLAMA_VOICE_PORT</key>
+        <string>11435</string>
+        <key>VOICEMODE_OLLAMA_VOICE_ALIAS</key>
+        <string>phi4-mini-voice</string>
+    </dict>
+</dict>
+</plist>

@@ -79,10 +79,12 @@ nav:
     - Installation: tutorials/getting-started.md
     - Configuration: guides/configuration.md
   - Guides:
+    - Usage Sheet: guides/usage-sheet.md
     - Selecting Voices: guides/selecting-voices.md
     - Pronunciation: guides/pronunciation.md
     - MacBook Portable Mode: guides/macbook-portable.md
     - Claude Code Plugin: guides/claude-code-plugin.md
+    - Voice Runtime: guides/voice-runtime.md
     - Selective Tool Loading: guides/selective-tool-loading.md
     - Remote Access (serve): guides/serve-configuration.md
   - VoiceMode Connect:
@@ -103,6 +105,18 @@ nav:
   - Development:
     - Local Development: tutorials/development-setup.md
     - Tool Loading Architecture: reference/tool-loading-architecture.md
+  - Reports:
+    - Overview: reports/index.md
+    - Phase 3 Completion: reports/voicemode-phase3-completion-report-20260323_1332.md
+    - Phase 3 Start: reports/voicemode-phase3-start-report-20260323_1326.md
+    - Doc Capture Alignment: reports/voicemode-doc-capture-alignment-report-20260323_1322.md
+    - Phase 2 Completion: reports/voicemode-phase2-completion-report-20260323_1308.md
+    - Phase 1 Recheck + Phase 2 Start: reports/voicemode-phase1-recheck-phase2-start-report-20260323_1244.md
+    - Phase 1 Completion: reports/voicemode-phase1-completion-report-20260323_1225.md
+    - Voice Runtime Plan: reports/voicemode-voice-runtime-implementation-plan-20260323_1001.md
+    - Voice Runtime Outcome: reports/voicemode-voice-runtime-implementation-outcome-20260323_1029.md
+    - Current State Check: reports/voicemode-current-state-check-report-20260323_1045.md
+    - Plan Status Audit: reports/voicemode-plan-status-audit-20260323_1205.md
   - Troubleshooting:
     - Overview: troubleshooting/index.md
 

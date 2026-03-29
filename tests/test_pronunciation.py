@@ -2,7 +2,7 @@
 
 import os
 import pytest
-from voice_mode.pronounce import parse_compact_rules, PronounceManager
+from python_voicemode.pronounce import parse_compact_rules, PronounceManager
 
 
 def test_parse_basic_tts_rule():

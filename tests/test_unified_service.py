@@ -14,12 +14,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import the service function - get the actual function from the tool decorator.
 # FastMCP 2.x wraps tools as FunctionTool (with .fn attribute),
 # FastMCP 3.x returns the raw function.
-from voice_mode.tools.service import service as service_tool
+from python_voicemode.tools.service import service as service_tool
 service = getattr(service_tool, 'fn', service_tool)
 
 # Import prompts for testing
-from voice_mode.prompts.services import whisper_prompt as whisper_prompt_tool
-from voice_mode.prompts.services import kokoro_prompt as kokoro_prompt_tool
+from python_voicemode.prompts.services import whisper_prompt as whisper_prompt_tool
+from python_voicemode.prompts.services import kokoro_prompt as kokoro_prompt_tool
 
 # Extract the actual functions from FastMCP prompt/tool wrappers
 whisper_prompt = getattr(whisper_prompt_tool, 'fn', whisper_prompt_tool)
@@ -32,7 +32,7 @@ class TestUnifiedServiceTool:
     @pytest.mark.asyncio
     async def test_status_service_not_running(self):
         """Test status when service is not running"""
-        with patch('voice_mode.tools.service.check_service_status', return_value=("not_available", None)):
+        with patch('python_voicemode.tools.service.check_service_status', return_value=("not_available", None)):
             result = await service("whisper", "status")
             assert "not available" in result.lower()
             # The actual implementation doesn't include port in "not available" message
@@ -48,7 +48,7 @@ class TestUnifiedServiceTool:
         mock_proc.create_time.return_value = 1000000000
         mock_proc.cmdline.return_value = ["whisper-server", "--model", "model.bin"]
         
-        with patch('voice_mode.tools.service.check_service_status', return_value=("local", mock_proc)), \
+        with patch('python_voicemode.tools.service.check_service_status', return_value=("local", mock_proc)), \
              patch('time.time', return_value=1000001000):  # 1000 seconds later
             result = await service("whisper", "status")
             assert "✅" in result
@@ -62,16 +62,16 @@ class TestUnifiedServiceTool:
     async def test_start_service_already_running(self):
         """Test starting a service that's already running"""
         mock_proc = MagicMock()
-        with patch('voice_mode.tools.service.find_process_by_port', return_value=mock_proc):
+        with patch('python_voicemode.tools.service.find_process_by_port', return_value=mock_proc):
             result = await service("kokoro", "start")
             assert "already running" in result
     
     @pytest.mark.asyncio
     async def test_start_whisper_service(self):
         """Test starting whisper service"""
-        with patch('voice_mode.tools.service.find_process_by_port', side_effect=[None, MagicMock()]), \
-             patch('voice_mode.tools.service.find_whisper_server', return_value="/path/to/whisper-server"), \
-             patch('voice_mode.tools.service.find_whisper_model', return_value="/path/to/model.bin"), \
+        with patch('python_voicemode.tools.service.find_process_by_port', side_effect=[None, MagicMock()]), \
+             patch('python_voicemode.tools.service.find_whisper_server', return_value="/path/to/whisper-server"), \
+             patch('python_voicemode.tools.service.find_whisper_model', return_value="/path/to/model.bin"), \
              patch('subprocess.Popen') as mock_popen, \
              patch('subprocess.run') as mock_run, \
              patch('pathlib.Path.exists', return_value=False), \
@@ -92,8 +92,8 @@ class TestUnifiedServiceTool:
     @pytest.mark.asyncio
     async def test_start_whisper_missing_binary(self):
         """Test starting whisper when binary is missing"""
-        with patch('voice_mode.tools.service.find_process_by_port', return_value=None), \
-             patch('voice_mode.tools.service.find_whisper_server', return_value=None), \
+        with patch('python_voicemode.tools.service.find_process_by_port', return_value=None), \
+             patch('python_voicemode.tools.service.find_whisper_server', return_value=None), \
              patch('pathlib.Path.exists', return_value=False):
             result = await service("whisper", "start")
             assert "❌" in result
@@ -103,7 +103,7 @@ class TestUnifiedServiceTool:
     @pytest.mark.asyncio
     async def test_stop_service_not_running(self):
         """Test stopping a service that's not running"""
-        with patch('voice_mode.tools.service.find_process_by_port', return_value=None), \
+        with patch('python_voicemode.tools.service.find_process_by_port', return_value=None), \
              patch('pathlib.Path.exists', return_value=False):
             result = await service("whisper", "stop")
             assert "not running" in result.lower()
@@ -117,7 +117,7 @@ class TestUnifiedServiceTool:
         mock_proc.wait = MagicMock()
         
         # Mock platform and service files to force fallback to process termination
-        with patch('voice_mode.tools.service.find_process_by_port', return_value=mock_proc), \
+        with patch('python_voicemode.tools.service.find_process_by_port', return_value=mock_proc), \
              patch('platform.system', return_value='Darwin'), \
              patch('pathlib.Path.exists', return_value=False):  # No service files exist
             result = await service("kokoro", "stop")
@@ -129,8 +129,8 @@ class TestUnifiedServiceTool:
     @pytest.mark.asyncio
     async def test_restart_service(self):
         """Test restarting a service"""
-        with patch('voice_mode.tools.service.stop_service', return_value="✅ Service stopped"), \
-             patch('voice_mode.tools.service.start_service', return_value="✅ Service started"), \
+        with patch('python_voicemode.tools.service.stop_service', return_value="✅ Service stopped"), \
+             patch('python_voicemode.tools.service.start_service', return_value="✅ Service started"), \
              patch('asyncio.sleep'):
             result = await service("whisper", "restart")
             assert "Restart whisper:" in result
@@ -141,9 +141,9 @@ class TestUnifiedServiceTool:
     async def test_enable_service_macos(self):
         """Test enabling service on macOS"""
         with patch('platform.system', return_value='Darwin'), \
-             patch('voice_mode.tools.service.load_service_template', return_value="template content") as mock_template, \
-             patch('voice_mode.tools.service.find_whisper_server', return_value="/Users/test/.voicemode/services/whisper/build/bin/whisper-server"), \
-             patch('voice_mode.tools.service.find_whisper_model', return_value="/path/to/model.bin"), \
+             patch('python_voicemode.tools.service.load_service_template', return_value="template content") as mock_template, \
+             patch('python_voicemode.tools.service.find_whisper_server', return_value="/Users/test/.voicemode/services/whisper/build/bin/whisper-server"), \
+             patch('python_voicemode.tools.service.find_whisper_model', return_value="/path/to/model.bin"), \
              patch('pathlib.Path.exists', return_value=True), \
              patch('pathlib.Path.mkdir'), \
              patch('pathlib.Path.write_text'), \
@@ -185,8 +185,8 @@ class TestUnifiedServiceTool:
         mock_template_content = "[Service]\nExecStart={START_SCRIPT}\n"
 
         with patch('platform.system', return_value='Linux'), \
-             patch('voice_mode.tools.service.load_service_template', return_value=mock_template_content), \
-             patch('voice_mode.tools.service.find_kokoro_fastapi', return_value="/path/to/kokoro"), \
+             patch('python_voicemode.tools.service.load_service_template', return_value=mock_template_content), \
+             patch('python_voicemode.tools.service.find_kokoro_fastapi', return_value="/path/to/kokoro"), \
              patch('pathlib.Path.exists', return_value=True), \
              patch('pathlib.Path.mkdir'), \
              patch('pathlib.Path.write_text'), \
@@ -286,9 +286,9 @@ class TestUnifiedServiceTool:
         mock_template_content = "<plist><string>{START_SCRIPT}</string><string>{HOME}</string></plist>"
 
         with patch('platform.system', return_value='Darwin'), \
-             patch('voice_mode.tools.service.load_service_template', return_value=mock_template_content), \
-             patch('voice_mode.tools.service.find_whisper_server', return_value="/Users/test/.voicemode/services/whisper/build/bin/whisper-server"), \
-             patch('voice_mode.tools.service.find_whisper_model', return_value="/path/to/model.bin"), \
+             patch('python_voicemode.tools.service.load_service_template', return_value=mock_template_content), \
+             patch('python_voicemode.tools.service.find_whisper_server', return_value="/Users/test/.voicemode/services/whisper/build/bin/whisper-server"), \
+             patch('python_voicemode.tools.service.find_whisper_model', return_value="/path/to/model.bin"), \
              patch('pathlib.Path.exists', return_value=True), \
              patch('pathlib.Path.mkdir'), \
              patch('pathlib.Path.write_text') as mock_write, \

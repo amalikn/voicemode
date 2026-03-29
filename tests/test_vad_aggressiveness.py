@@ -1,4 +1,4 @@
-"""Tests for VAD aggressiveness parameter in voice_mode."""
+"""Tests for VAD aggressiveness parameter in python_voicemode."""
 
 import pytest
 import numpy as np
@@ -7,13 +7,13 @@ import queue
 from unittest.mock import Mock, patch, MagicMock, AsyncMock
 import sys
 
-# Mock webrtcvad before importing voice_mode modules
+# Mock webrtcvad before importing python_voicemode modules
 sys.modules['webrtcvad'] = MagicMock()
 
-from voice_mode.tools.converse import (
+from python_voicemode.tools.converse import (
     record_audio_with_silence_detection
 )
-from voice_mode.config import (
+from python_voicemode.config import (
     SAMPLE_RATE,
     VAD_CHUNK_DURATION_MS,
     VAD_AGGRESSIVENESS
@@ -26,7 +26,7 @@ class TestVADAggressiveness:
     @pytest.fixture
     def mock_vad(self):
         """Mock webrtcvad.Vad class."""
-        with patch('voice_mode.tools.converse.webrtcvad') as mock_webrtcvad:
+        with patch('python_voicemode.tools.converse.webrtcvad') as mock_webrtcvad:
             mock_vad_instance = MagicMock()
             mock_vad_instance.is_speech.return_value = True
             mock_webrtcvad.Vad.return_value = mock_vad_instance
@@ -35,7 +35,7 @@ class TestVADAggressiveness:
     @pytest.fixture
     def mock_audio_recording(self):
         """Mock audio recording functions."""
-        with patch('voice_mode.tools.converse.sd') as mock_sd:
+        with patch('python_voicemode.tools.converse.sd') as mock_sd:
             # Create a simple audio chunk
             chunk = np.random.randint(-1000, 1000, 
                                     size=int(SAMPLE_RATE * VAD_CHUNK_DURATION_MS / 1000), 
@@ -55,7 +55,7 @@ class TestVADAggressiveness:
             mock_vad.reset_mock()
             
             # Call with specific aggressiveness
-            with patch('voice_mode.tools.converse.VAD_AVAILABLE', True):
+            with patch('python_voicemode.tools.converse.VAD_AVAILABLE', True):
                 # We need to mock the audio queue behavior
                 with patch('queue.Queue') as mock_queue:
                     # Make the queue return some data then timeout
@@ -79,7 +79,7 @@ class TestVADAggressiveness:
     
     def test_vad_aggressiveness_uses_default_when_none(self, mock_vad, mock_audio_recording):
         """Test that None vad_aggressiveness uses the default from config."""
-        with patch('voice_mode.tools.converse.VAD_AVAILABLE', True):
+        with patch('python_voicemode.tools.converse.VAD_AVAILABLE', True):
             with patch('queue.Queue') as mock_queue:
                 mock_queue_instance = MagicMock()
                 mock_queue_instance.get.side_effect = Exception("Timeout")

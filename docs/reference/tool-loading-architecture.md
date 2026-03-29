@@ -13,7 +13,7 @@ VoiceMode's tool loading system provides automatic discovery and dynamic import 
 ## Directory Structure
 
 ```
-voice_mode/tools/
+python_voicemode/tools/
 ├── __init__.py                  # Discovery and loading logic
 ├── {tool_name}.py               # Regular tools (e.g. converse.py, devices.py)
 ├── services/                    # Service-specific tools
@@ -35,7 +35,7 @@ voice_mode/tools/
 
 ### File System Scanning
 
-The `get_all_available_tools()` function in `voice_mode/tools/__init__.py` discovers tools by:
+The `get_all_available_tools()` function in `python_voicemode/tools/__init__.py` discovers tools by:
 
 1. Scanning the tools directory for Python files
 2. Recursively scanning the services subdirectory
@@ -130,11 +130,11 @@ def load_tool(tool_name: str) -> bool:
 
 ### Server Initialization
 
-In `voice_mode/server.py`:
+In `python_voicemode/server.py`:
 
 ```python
 # Tools are auto-imported from the tools directory
-import voice_mode.tools
+import python_voicemode.tools
 
 # FastMCP server automatically discovers decorated tools
 mcp = fastmcp.FastMCP(
@@ -217,13 +217,13 @@ except ImportError as e:
 
 ### Adding New Regular Tools
 
-1. Create `voice_mode/tools/{tool_name}.py`
+1. Create `python_voicemode/tools/{tool_name}.py`
 2. Implement tool function with FastMCP decorator
 3. Tool automatically discovered on next server start
 
 ### Creating Service Tools
 
-1. Create directory: `voice_mode/tools/services/{service}/`
+1. Create directory: `python_voicemode/tools/services/{service}/`
 2. Add tool modules: `install.py`, `uninstall.py`, etc.
 3. Tools exposed as `{service}_{tool}`
 4. Place shared code in `helpers.py` (excluded from loading)
@@ -249,8 +249,8 @@ except ImportError as e:
 
 ### Key Files
 
-- `voice_mode/tools/__init__.py` - Discovery and loading logic
-- `voice_mode/server.py` - MCP server initialization
+- `python_voicemode/tools/__init__.py` - Discovery and loading logic
+- `python_voicemode/server.py` - MCP server initialization
 - Individual tool modules - Tool implementations
 
 ### Configuration Flow

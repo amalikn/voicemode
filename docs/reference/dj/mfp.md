@@ -196,10 +196,10 @@ Cache directory: /Users/you/.voicemode/music-for-programming
 Community contributions to improve chapter accuracy are welcome! To contribute:
 
 1. **Fork the VoiceMode repository** on GitHub
-2. **Create or improve chapter files** in `voice_mode/data/mfp/`
+2. **Create or improve chapter files** in `python_voicemode/data/mfp/`
 3. **Update the checksums** by regenerating `chapters.sha256`:
    ```bash
-   cd voice_mode/data/mfp
+   cd python_voicemode/data/mfp
    shasum -a 256 *.cue *.ffmeta > chapters.sha256
    ```
 4. **Submit a Pull Request** with your changes

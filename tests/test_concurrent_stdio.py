@@ -20,9 +20,9 @@ import numpy as np
 os.environ['OPENAI_API_KEY'] = os.environ.get('OPENAI_API_KEY', 'test-key')
 
 # Import from the appropriate modules
-from voice_mode.config import audio_operation_lock
-from voice_mode.tools.converse import record_audio, speech_to_text
-from voice_mode.shared import (
+from python_voicemode.config import audio_operation_lock
+from python_voicemode.tools.converse import record_audio, speech_to_text
+from python_voicemode.shared import (
     disable_sounddevice_stderr_redirect,
 )
 
@@ -103,8 +103,8 @@ class TestStdioProtection:
         original_stdout = sys.stdout
         original_stderr = sys.stderr
         
-        with patch('voice_mode.tools.converse.sd.rec') as mock_rec, \
-             patch('voice_mode.tools.converse.sd.wait') as mock_wait:
+        with patch('python_voicemode.tools.converse.sd.rec') as mock_rec, \
+             patch('python_voicemode.tools.converse.sd.wait') as mock_wait:
             # Make recording fail
             mock_rec.side_effect = Exception("Recording failed")
             

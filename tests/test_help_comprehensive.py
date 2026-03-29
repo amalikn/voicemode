@@ -17,7 +17,7 @@ class TestHelpBasics:
     def test_help_main_command_sections(self):
         """Test that main help command has all expected sections."""
         result = subprocess.run(
-            [sys.executable, '-m', 'voice_mode', '--help'],
+            [sys.executable, '-m', 'python_voicemode', '--help'],
             capture_output=True,
             text=True,
             timeout=2
@@ -35,7 +35,7 @@ class TestHelpBasics:
     def test_help_no_heavy_imports(self):
         """Verify help doesn't trigger heavy imports."""
         result = subprocess.run(
-            [sys.executable, '-m', 'voice_mode', '--help'],
+            [sys.executable, '-m', 'python_voicemode', '--help'],
             capture_output=True,
             text=True,
             timeout=2,

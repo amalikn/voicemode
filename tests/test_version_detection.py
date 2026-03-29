@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 import pytest
 
-from voice_mode.version import (
+from python_voicemode.version import (
     get_git_commit_hash,
     is_git_repository,
     get_version,
@@ -59,7 +59,7 @@ def test_version_format():
 
 def test_get_version_non_git():
     """Test version when not in a git repository."""
-    with patch('voice_mode.version.is_git_repository', return_value=False):
+    with patch('python_voicemode.version.is_git_repository', return_value=False):
         version = get_version()
         # Should return base version without dev suffix
         assert "-dev." not in version
@@ -68,8 +68,8 @@ def test_get_version_non_git():
 
 def test_get_version_git_with_commit():
     """Test version in git repository with commit."""
-    with patch('voice_mode.version.is_git_repository', return_value=True):
-        with patch('voice_mode.version.get_git_commit_hash', return_value='abc1234'):
+    with patch('python_voicemode.version.is_git_repository', return_value=True):
+        with patch('python_voicemode.version.get_git_commit_hash', return_value='abc1234'):
             with patch('subprocess.run') as mock_run:
                 # Mock clean git status
                 mock_run.return_value = MagicMock(stdout='')
@@ -79,8 +79,8 @@ def test_get_version_git_with_commit():
 
 def test_get_version_git_with_changes():
     """Test version in git repository with uncommitted changes."""
-    with patch('voice_mode.version.is_git_repository', return_value=True):
-        with patch('voice_mode.version.get_git_commit_hash', return_value='abc1234'):
+    with patch('python_voicemode.version.is_git_repository', return_value=True):
+        with patch('python_voicemode.version.get_git_commit_hash', return_value='abc1234'):
             with patch('subprocess.run') as mock_run:
                 # Mock dirty git status
                 mock_run.return_value = MagicMock(stdout='M some_file.py')

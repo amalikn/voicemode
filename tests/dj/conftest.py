@@ -4,8 +4,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from voice_mode.dj import CommandResult, MpvBackend, MpvPlayer
-from voice_mode.dj.controller import DJController
+from python_voicemode.dj import CommandResult, MpvBackend, MpvPlayer
+from python_voicemode.dj.controller import DJController
 
 
 class MockBackend:

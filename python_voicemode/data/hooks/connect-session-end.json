@@ -1,0 +1,15 @@
+{
+  "description": "VoiceMode Connect: SessionEnd hook - cleans up inbox-live symlink and session identity file",
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/python_voicemode/data/hooks/connect-session-end.sh || true"
+          }
+        ]
+      }
+    ]
+  }
+}

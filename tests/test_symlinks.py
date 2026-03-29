@@ -1,4 +1,4 @@
-"""Unit tests for symlink utilities in voice_mode.utils.symlinks."""
+"""Unit tests for symlink utilities in python_voicemode.utils.symlinks."""
 
 import os
 from pathlib import Path
@@ -15,8 +15,8 @@ def patch_audio_dir(isolate_home_directory, monkeypatch):
     patches it to use the current test's isolated home directory.
     """
     correct_audio_dir = isolate_home_directory / ".voicemode" / "audio"
-    monkeypatch.setattr("voice_mode.config.AUDIO_DIR", correct_audio_dir)
-    monkeypatch.setattr("voice_mode.utils.symlinks.AUDIO_DIR", correct_audio_dir)
+    monkeypatch.setattr("python_voicemode.config.AUDIO_DIR", correct_audio_dir)
+    monkeypatch.setattr("python_voicemode.utils.symlinks.AUDIO_DIR", correct_audio_dir)
 
 
 class TestUpdateLatestSymlinks:
@@ -24,8 +24,8 @@ class TestUpdateLatestSymlinks:
 
     def test_creates_stt_and_latest_symlinks_for_wav(self, isolate_home_directory):
         """Test that symlinks are created correctly for .wav STT files."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         # Create test audio file
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
@@ -51,8 +51,8 @@ class TestUpdateLatestSymlinks:
 
     def test_creates_tts_and_latest_symlinks_for_mp3(self, isolate_home_directory):
         """Test that symlinks are created correctly for .mp3 TTS files."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         # Create test audio file
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
@@ -76,8 +76,8 @@ class TestUpdateLatestSymlinks:
 
     def test_creates_symlinks_for_various_extensions(self, isolate_home_directory):
         """Test symlink creation works for multiple audio formats."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -101,8 +101,8 @@ class TestUpdateLatestSymlinks:
 
     def test_uses_relative_paths_for_symlinks(self, isolate_home_directory):
         """Test that symlinks use relative paths when file is under AUDIO_DIR."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         # Create test audio file in subdirectory
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
@@ -129,8 +129,8 @@ class TestSymlinkExtensionChanges:
 
     def test_removes_old_stt_symlink_when_extension_changes(self, isolate_home_directory):
         """Test that old STT symlink is removed when a new file has different extension."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -164,8 +164,8 @@ class TestSymlinkExtensionChanges:
 
     def test_removes_old_tts_symlink_when_extension_changes(self, isolate_home_directory):
         """Test that old TTS symlink is removed when a new file has different extension."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -189,8 +189,8 @@ class TestSymlinkExtensionChanges:
 
     def test_latest_symlink_updated_by_both_stt_and_tts(self, isolate_home_directory):
         """Test that 'latest' symlink is updated by both STT and TTS."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -221,7 +221,7 @@ class TestSymlinkCleanup:
 
     def test_removes_only_symlinks_not_regular_files(self, isolate_home_directory, tmp_path):
         """Test that cleanup only removes symlinks, not regular files."""
-        from voice_mode.utils.symlinks import _remove_old_symlinks
+        from python_voicemode.utils.symlinks import _remove_old_symlinks
 
         # Use a fresh directory to avoid conflicts with other tests
         test_dir = tmp_path / "symlink_cleanup_test"
@@ -247,7 +247,7 @@ class TestSymlinkCleanup:
 
     def test_cleanup_removes_symlink_with_different_extension(self, isolate_home_directory, tmp_path):
         """Test that cleanup removes symlinks with various extensions."""
-        from voice_mode.utils.symlinks import _remove_old_symlinks
+        from python_voicemode.utils.symlinks import _remove_old_symlinks
 
         # Use a fresh directory
         test_dir = tmp_path / "symlink_ext_test"
@@ -276,8 +276,8 @@ class TestSymlinkErrorHandling:
 
     def test_returns_none_for_nonexistent_file(self, isolate_home_directory):
         """Test that function returns (None, None) for nonexistent source file."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
         nonexistent = AUDIO_DIR / "does_not_exist.wav"
@@ -289,8 +289,8 @@ class TestSymlinkErrorHandling:
 
     def test_returns_none_for_file_without_extension(self, isolate_home_directory):
         """Test that function returns (None, None) for file without extension."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
         no_ext_file = AUDIO_DIR / "no_extension"
@@ -303,8 +303,8 @@ class TestSymlinkErrorHandling:
 
     def test_handles_permission_error_gracefully(self, isolate_home_directory):
         """Test that permission errors are handled and return (None, None)."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
         test_file = AUDIO_DIR / "test.wav"
@@ -319,8 +319,8 @@ class TestSymlinkErrorHandling:
 
     def test_handles_string_path_input(self, isolate_home_directory):
         """Test that function accepts string paths in addition to Path objects."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
         test_file = AUDIO_DIR / "test_string_path.wav"
@@ -335,8 +335,8 @@ class TestSymlinkErrorHandling:
 
     def test_handles_file_outside_audio_dir(self, isolate_home_directory, tmp_path):
         """Test handling of files outside AUDIO_DIR (uses absolute path)."""
-        from voice_mode.utils.symlinks import update_latest_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import update_latest_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -360,8 +360,8 @@ class TestRemoveOldSymlinksFunction:
 
     def test_handles_empty_directory(self, isolate_home_directory):
         """Test that cleanup handles empty directory without errors."""
-        from voice_mode.utils.symlinks import _remove_old_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import _remove_old_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -372,7 +372,7 @@ class TestRemoveOldSymlinksFunction:
 
     def test_handles_nonexistent_directory(self, isolate_home_directory, tmp_path):
         """Test that cleanup handles nonexistent directory without errors."""
-        from voice_mode.utils.symlinks import _remove_old_symlinks
+        from python_voicemode.utils.symlinks import _remove_old_symlinks
 
         nonexistent_dir = tmp_path / "nonexistent"
 
@@ -381,8 +381,8 @@ class TestRemoveOldSymlinksFunction:
 
     def test_removes_multiple_matching_symlinks(self, isolate_home_directory):
         """Test that all matching symlinks are removed."""
-        from voice_mode.utils.symlinks import _remove_old_symlinks
-        from voice_mode.config import AUDIO_DIR
+        from python_voicemode.utils.symlinks import _remove_old_symlinks
+        from python_voicemode.config import AUDIO_DIR
 
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 

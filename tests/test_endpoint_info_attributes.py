@@ -7,7 +7,7 @@ import pytest
 from unittest.mock import Mock, patch, AsyncMock
 from datetime import datetime
 
-from voice_mode.provider_discovery import EndpointInfo, ProviderRegistry
+from python_voicemode.provider_discovery import EndpointInfo, ProviderRegistry
 
 
 class TestEndpointInfoAttributes:
@@ -72,7 +72,7 @@ class TestProviderToolsUsage:
     @pytest.mark.asyncio
     async def test_providers_tool_accesses_healthy_field(self):
         """Test that provider tools access the healthy field correctly."""
-        from voice_mode.tools.providers import refresh_provider_registry
+        from python_voicemode.tools.providers import refresh_provider_registry
 
         # Create a mock registry with an endpoint
         mock_registry = Mock(spec=ProviderRegistry)
@@ -89,7 +89,7 @@ class TestProviderToolsUsage:
             "tts": {"http://127.0.0.1:8880/v1": mock_endpoint}
         }
 
-        with patch('voice_mode.tools.providers.provider_registry', mock_registry):
+        with patch('python_voicemode.tools.providers.provider_registry', mock_registry):
             # This should work if the fields exist
             result = await refresh_provider_registry.fn(optimistic=False)
             # The tool should be able to access endpoint.healthy without error
@@ -98,7 +98,7 @@ class TestProviderToolsUsage:
     @pytest.mark.asyncio
     async def test_devices_tool_accesses_healthy_field(self):
         """Test that devices tool accesses the healthy field correctly."""
-        from voice_mode.provider_discovery import EndpointInfo
+        from python_voicemode.provider_discovery import EndpointInfo
 
         # Mock the registry to return our test endpoint
         mock_registry = Mock(spec=ProviderRegistry)
@@ -115,9 +115,9 @@ class TestProviderToolsUsage:
         mock_registry.initialize = AsyncMock()
 
         # Patch at the location where it's imported (inside the function)
-        with patch('voice_mode.provider_discovery.provider_registry', mock_registry):
+        with patch('python_voicemode.provider_discovery.provider_registry', mock_registry):
             # Import here to apply the patch
-            from voice_mode.tools.devices import voice_status
+            from python_voicemode.tools.devices import voice_status
 
             # This should work without AttributeError
             result = await voice_status.fn()
@@ -130,10 +130,10 @@ class TestConverseIntegrationWithEndpointInfo:
     @pytest.mark.asyncio
     async def test_converse_handles_missing_endpoint_gracefully(self):
         """Test that converse handles missing endpoints gracefully."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
         # Mock the failover to simulate all endpoints failing
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             # Simulate failure with proper error structure
             mock_tts.return_value = (False, None, {
                 'error_type': 'all_providers_failed',
@@ -158,9 +158,9 @@ class TestConverseIntegrationWithEndpointInfo:
     @pytest.mark.asyncio
     async def test_converse_with_openai_quota_error(self):
         """Test that converse properly reports OpenAI quota errors."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             # Simulate OpenAI quota error
             mock_tts.return_value = (False, None, {
                 'error_type': 'all_providers_failed',

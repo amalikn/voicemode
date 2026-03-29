@@ -10,13 +10,13 @@ from pathlib import Path
 
 
 def get_current_version():
-    """Get the current version from voice_mode/__version__.py."""
-    version_file = Path("voice_mode/__version__.py")
+    """Get the current version from python_voicemode/__version__.py."""
+    version_file = Path("python_voicemode/__version__.py")
     content = version_file.read_text()
     match = re.search(r'^__version__ = ["\']([^"\']+)["\']', content, re.MULTILINE)
     if match:
         return match.group(1)
-    raise ValueError("Could not find version in voice_mode/__version__.py")
+    raise ValueError("Could not find version in python_voicemode/__version__.py")
 
 
 def update_version_in_file(filepath, pattern, replacement):
@@ -79,11 +79,11 @@ def update_version(new_version, packages=None):
     # Always update main package files
     if "package" in packages:
         if update_version_in_file(
-            "voice_mode/__version__.py",
+            "python_voicemode/__version__.py",
             r'^__version__ = ["\'][^"\']+["\']',
             f'__version__ = "{new_version}"'
         ):
-            files_updated.append("voice_mode/__version__.py")
+            files_updated.append("python_voicemode/__version__.py")
 
         if update_version_in_file(
             "server.json",
@@ -140,7 +140,7 @@ def commit_and_tag(version, packages=None):
     # Stage all changed files
     files_to_add = ["CHANGELOG.md", ".claude-plugin/plugin.json"]
     if packages is None or "package" in packages:
-        files_to_add.extend(["voice_mode/__version__.py", "server.json"])
+        files_to_add.extend(["python_voicemode/__version__.py", "server.json"])
     if packages is None or "installer" in packages:
         files_to_add.append("installer/pyproject.toml")
 

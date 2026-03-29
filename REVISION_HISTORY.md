@@ -4,6 +4,11 @@ Auto-maintained release and operator update log for this sub-repo.
 
 | Recorded At (UTC) | Branch | Remote | Commit | Subject |
 |---|---|---|---|---|
+| 2026-03-23T03:32:00+00:00 | main | origin | `pending` | feat: complete phase 3 runtime polish, diagnostics, and coverage |
+| 2026-03-23T03:26:00+00:00 | main | origin | `pending` | feat: start phase 3 runtime hardening with richer diagnostics and recovery |
+| 2026-03-23T02:22:00+00:00 | main | origin | `pending` | docs: capture phased runtime status across README, changelog, and revision history |
+| 2026-03-23T02:08:00+00:00 | main | origin | `pending` | feat: complete phase 2 local/hybrid runtime with silero, codex bridge, and pipecat adapter |
+| 2026-03-23T01:25:00+00:00 | main | origin | `pending` | feat: complete phase 1 local/hybrid runtime foundation and validation |
 | 2026-03-05T02:35:00+00:00 | main | origin | `pending` | docs: add stable multi-client setup and launch-agent path fix |
 | 2026-03-04T12:44:53+00:00 | main | origin | `16941f3` | docs: add Codex VoiceMode setup and first-run notes |
 

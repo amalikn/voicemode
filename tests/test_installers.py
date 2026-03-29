@@ -263,7 +263,7 @@ class TestWhisperCppInstaller:
                  patch('platform.system', return_value='Darwin'), \
                  patch('builtins.open', create=True), \
                  patch('os.chmod'), \
-                 patch('voice_mode.tools.whisper.install.download_whisper_model') as mock_download:
+                 patch('python_voicemode.tools.whisper.install.download_whisper_model') as mock_download:
                 
                 mock_run.return_value = MagicMock(returncode=0)
                 mock_download.return_value = {

@@ -9,8 +9,8 @@ import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 from datetime import datetime
 
-from voice_mode.tools.converse import speech_to_text
-from voice_mode import config
+from python_voicemode.tools.converse import speech_to_text
+from python_voicemode import config
 
 
 @pytest.mark.asyncio
@@ -31,16 +31,16 @@ async def test_stt_audio_saved_with_simple_failover():
         test_audio_dir.mkdir()
 
         # Patch the config values to ensure saving is enabled
-        with patch('voice_mode.config.SAVE_ALL', True), \
-             patch('voice_mode.config.SAVE_AUDIO', True), \
-             patch('voice_mode.tools.converse.SAVE_AUDIO', True):
+        with patch('python_voicemode.config.SAVE_ALL', True), \
+             patch('python_voicemode.config.SAVE_AUDIO', True), \
+             patch('python_voicemode.tools.converse.SAVE_AUDIO', True):
 
             # Mock the simple_stt_failover to return test transcription dict
-            with patch('voice_mode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
+            with patch('python_voicemode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
                 mock_stt.return_value = {"text": "Test transcription", "provider": "whisper", "endpoint": "http://127.0.0.1:2022/v1"}
 
                 # Mock the conversation logger
-                with patch('voice_mode.tools.converse.get_conversation_logger') as mock_logger:
+                with patch('python_voicemode.tools.converse.get_conversation_logger') as mock_logger:
                     mock_conv_logger = MagicMock()
                     mock_conv_logger.conversation_id = "test123"
                     mock_logger.return_value = mock_conv_logger
@@ -85,7 +85,7 @@ async def test_stt_audio_not_saved_when_disabled():
         test_audio_dir.mkdir()
 
         # Mock the simple_stt_failover to return dict format
-        with patch('voice_mode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
+        with patch('python_voicemode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
             mock_stt.return_value = {"text": "Test transcription", "provider": "whisper", "endpoint": "http://127.0.0.1:2022/v1"}
 
             # Call with save_audio=False

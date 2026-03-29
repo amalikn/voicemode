@@ -5,7 +5,7 @@ The current tool organization has an unnecessary `services/` intermediate direct
 
 ## Current Structure
 ```
-voice_mode/tools/
+python_voicemode/tools/
 ├── configuration_management.py    # Regular tool with underscore
 ├── voice_registry.py              # Regular tool with underscore
 ├── services/                      # Unnecessary intermediate directory
@@ -24,7 +24,7 @@ voice_mode/tools/
 
 ## Proposed Structure
 ```
-voice_mode/tools/
+python_voicemode/tools/
 ├── configuration_management.py    # Regular tool
 ├── voice_registry.py              # Regular tool
 ├── kokoro/                        # Service tools at same level as other subdirs
@@ -77,7 +77,7 @@ elif file in {any_subdir}/:
 - Handle `services/list_versions.py` and `services/version_info.py`
 
 ### 2. Import Updates
-- Update any imports from `voice_mode.tools.services.{service}` to `voice_mode.tools.{service}`
+- Update any imports from `python_voicemode.tools.services.{service}` to `python_voicemode.tools.{service}`
 - Update load_tool() function to use simplified logic
 - Update get_all_available_tools() to scan all subdirectories uniformly
 
@@ -119,22 +119,22 @@ to simplify tool loading logic and eliminate ambiguity."
 
 #### 2.1 Analyze Dependencies on version_info.py and list_versions.py
 These files are currently in `services/` but are imported by:
-- `voice_mode/tools/service.py` (imports `get_kokoro_version` from version_info)
+- `python_voicemode/tools/service.py` (imports `get_kokoro_version` from version_info)
 
-**Decision**: Move to `voice_mode/utils/services/` to keep them as utilities rather than tools.
+**Decision**: Move to `python_voicemode/utils/services/` to keep them as utilities rather than tools.
 
 #### 2.2 Move Version Files
 ```bash
 # Create utils/services directory if it doesn't exist
-mkdir -p voice_mode/utils/services
+mkdir -p python_voicemode/utils/services
 
 # Move version files to utils
-git mv voice_mode/tools/services/version_info.py voice_mode/utils/services/
-git mv voice_mode/tools/services/list_versions.py voice_mode/utils/services/
+git mv python_voicemode/tools/services/version_info.py python_voicemode/utils/services/
+git mv python_voicemode/tools/services/list_versions.py python_voicemode/utils/services/
 
 # Update imports in service.py
-# Change: from voice_mode.tools.services.version_info import get_kokoro_version
-# To: from voice_mode.utils.services.version_info import get_kokoro_version
+# Change: from python_voicemode.tools.services.version_info import get_kokoro_version
+# To: from python_voicemode.utils.services.version_info import get_kokoro_version
 ```
 
 #### 2.3 Commit Version Files Move
@@ -162,7 +162,7 @@ uv run pytest tests/test_tool_loading.py -v  # If exists
 
 #### 3.3 Commit Loading Logic Changes
 ```bash
-git add voice_mode/tools/__init__.py
+git add python_voicemode/tools/__init__.py
 git commit -m "refactor: Simplify tool loading logic for uniform subdirectory handling
 
 Remove special case for services/ directory and treat all subdirectories
@@ -174,7 +174,7 @@ uniformly. This prepares for the directory structure flattening."
 #### 4.1 Move Whisper Service
 ```bash
 # Move whisper directory up one level
-git mv voice_mode/tools/services/whisper voice_mode/tools/
+git mv python_voicemode/tools/services/whisper python_voicemode/tools/
 
 # Update all whisper imports
 # Use sed or manual updates for all files importing from services.whisper
@@ -182,9 +182,9 @@ git mv voice_mode/tools/services/whisper voice_mode/tools/
 
 #### 4.2 Update Whisper Imports
 Files to update (based on grep results):
-- `voice_mode/cli.py` (8 imports)
-- `voice_mode/tools/services/whisper/__init__.py` (7 imports - now at tools/whisper/)
-- `voice_mode/tools/services/whisper/model_*.py` files (4 files)
+- `python_voicemode/cli.py` (8 imports)
+- `python_voicemode/tools/services/whisper/__init__.py` (7 imports - now at tools/whisper/)
+- `python_voicemode/tools/services/whisper/model_*.py` files (4 files)
 - Tests: none directly import whisper
 
 #### 4.3 Test Whisper Tools
@@ -204,7 +204,7 @@ Move tools/services/whisper/ to tools/whisper/ and update all imports."
 #### 4.5 Move Kokoro Service
 ```bash
 # Move kokoro directory
-git mv voice_mode/tools/services/kokoro voice_mode/tools/
+git mv python_voicemode/tools/services/kokoro python_voicemode/tools/
 
 # Update kokoro imports in cli.py (2 imports)
 ```
@@ -220,7 +220,7 @@ Move tools/services/kokoro/ to tools/kokoro/ and update imports."
 #### 4.7 Move LiveKit Service
 ```bash
 # Move livekit directory
-git mv voice_mode/tools/services/livekit voice_mode/tools/
+git mv python_voicemode/tools/services/livekit python_voicemode/tools/
 
 # Update livekit imports in:
 # - cli.py (10 imports)
@@ -242,20 +242,20 @@ Move tools/services/livekit/ to tools/livekit/ and update all imports."
 #### 5.1 Remove Empty Services Directory
 ```bash
 # Verify services directory is empty
-ls -la voice_mode/tools/services/
+ls -la python_voicemode/tools/services/
 # Should only show . and .. (empty)
 
 # Remove the directory
-rmdir voice_mode/tools/services
+rmdir python_voicemode/tools/services
 ```
 
 #### 5.2 Final Verification
 ```bash
 # Verify structure
-tree voice_mode/tools -d -L 1
+tree python_voicemode/tools -d -L 1
 
 # Should show:
-# voice_mode/tools
+# python_voicemode/tools
 # ├── kokoro
 # ├── livekit
 # ├── sound_fonts
@@ -326,7 +326,7 @@ git log --oneline -10
 git diff master...HEAD --stat
 
 # Detailed diff for key files
-git diff master...HEAD -- voice_mode/tools/__init__.py
+git diff master...HEAD -- python_voicemode/tools/__init__.py
 ```
 
 #### 8.2 Push Feature Branch
@@ -384,32 +384,32 @@ gh pr merge --merge  # or --squash
 #### Whisper Import Updates
 ```bash
 # Update CLI imports
-sed -i '' 's/from voice_mode\.tools\.services\.whisper/from voice_mode.tools.whisper/g' voice_mode/cli.py
+sed -i '' 's/from python_voicemode\.tools\.services\.whisper/from python_voicemode.tools.whisper/g' python_voicemode/cli.py
 
 # Update internal whisper imports
-find voice_mode/tools/whisper -name "*.py" -exec \
-  sed -i '' 's/from voice_mode\.tools\.services\.whisper/from voice_mode.tools.whisper/g' {} \;
+find python_voicemode/tools/whisper -name "*.py" -exec \
+  sed -i '' 's/from python_voicemode\.tools\.services\.whisper/from python_voicemode.tools.whisper/g' {} \;
 ```
 
 #### Kokoro Import Updates
 ```bash
 # Update CLI imports
-sed -i '' 's/from voice_mode\.tools\.services\.kokoro/from voice_mode.tools.kokoro/g' voice_mode/cli.py
+sed -i '' 's/from python_voicemode\.tools\.services\.kokoro/from python_voicemode.tools.kokoro/g' python_voicemode/cli.py
 
 # Update service.py import
-sed -i '' 's/from voice_mode\.tools\.services\.version_info/from voice_mode.utils.services.version_info/g' voice_mode/tools/service.py
+sed -i '' 's/from python_voicemode\.tools\.services\.version_info/from python_voicemode.utils.services.version_info/g' python_voicemode/tools/service.py
 ```
 
 #### LiveKit Import Updates
 ```bash
 # Update CLI imports
-sed -i '' 's/from voice_mode\.tools\.services\.livekit/from voice_mode.tools.livekit/g' voice_mode/cli.py
+sed -i '' 's/from python_voicemode\.tools\.services\.livekit/from python_voicemode.tools.livekit/g' python_voicemode/cli.py
 
 # Update service.py import
-sed -i '' 's/from voice_mode\.tools\.services\.livekit/from voice_mode.tools.livekit/g' voice_mode/tools/service.py
+sed -i '' 's/from python_voicemode\.tools\.services\.livekit/from python_voicemode.tools.livekit/g' python_voicemode/tools/service.py
 
 # Update test imports
-sed -i '' 's/from voice_mode\.tools\.services\.livekit/from voice_mode.tools.livekit/g' tests/test_livekit_*.py
+sed -i '' 's/from python_voicemode\.tools\.services\.livekit/from python_voicemode.tools.livekit/g' tests/test_livekit_*.py
 ```
 
 ## Rollback Plan

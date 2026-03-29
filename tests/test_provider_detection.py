@@ -2,8 +2,8 @@
 
 import pytest
 from unittest.mock import Mock, AsyncMock, patch
-from voice_mode.tools.converse import speech_to_text, get_stt_config
-from voice_mode.provider_discovery import EndpointInfo
+from python_voicemode.tools.converse import speech_to_text, get_stt_config
+from python_voicemode.provider_discovery import EndpointInfo
 
 
 class TestProviderDetection:
@@ -33,7 +33,7 @@ class TestProviderDetection:
         
         # Read the source file to check for the bug
         from pathlib import Path
-        converse_file = Path(__file__).parent.parent / "voice_mode" / "tools" / "converse.py"
+        converse_file = Path(__file__).parent.parent / "python_voicemode" / "tools" / "converse.py"
         
         with open(converse_file, 'r') as f:
             content = f.read()
@@ -77,7 +77,7 @@ class TestProviderDetection:
     async def test_endpoint_info_attribute_usage(self):
         """Test that get_stt_config returns proper configuration."""
         # Mock STT_BASE_URLS to control the endpoint
-        with patch('voice_mode.config.STT_BASE_URLS', ["http://127.0.0.1:2022/v1"]):
+        with patch('python_voicemode.config.STT_BASE_URLS', ["http://127.0.0.1:2022/v1"]):
             # Call get_stt_config
             config = await get_stt_config()
 

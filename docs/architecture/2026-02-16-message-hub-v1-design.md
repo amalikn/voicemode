@@ -30,7 +30,7 @@ These were agreed in a ~45 minute voice session on 2026-02-16:
 
 ### 1. Configuration: `VOICEMODE_AGENT_NAME` env var
 
-**File**: `voice_mode/config.py`
+**File**: `python_voicemode/config.py`
 
 New config variables:
 
@@ -64,7 +64,7 @@ Add to the default `voicemode.env` template:
 
 ### 2. Python message delivery library
 
-**New file**: `voice_mode/messaging.py`
+**New file**: `python_voicemode/messaging.py`
 
 Pure Python implementation of the `send-message` inbox injection protocol. No subprocess calls, no PATH dependency.
 
@@ -108,7 +108,7 @@ Key implementation details:
 
 ### 3. Auto-register on startup
 
-**File**: `voice_mode/connect_registry.py`
+**File**: `python_voicemode/connect_registry.py`
 
 After the WebSocket connection is established and the `ready` message is sent, check if auto-wakeable is configured:
 
@@ -148,7 +148,7 @@ async def register_wakeable(
 
 ### 4. Wire `_handle_agent_message` to use library
 
-**File**: `voice_mode/connect_registry.py`
+**File**: `python_voicemode/connect_registry.py`
 
 Replace the subprocess call to `send-message` with a direct call to the messaging library:
 
@@ -185,19 +185,19 @@ This eliminates the `shutil.which("send-message")` dependency and the `subproces
 
 | File | Change |
 |------|--------|
-| `voice_mode/config.py` | Add `AGENT_NAME`, `AGENT_PLATFORM`, `AUTO_WAKEABLE` config vars |
-| `voice_mode/messaging.py` | **New** - Python message delivery library |
-| `voice_mode/connect_registry.py` | Wire `_handle_agent_message` to use `messaging.deliver_message` |
-| `voice_mode/tools/connect.py` | Default `agent_name`/`agent_platform` from config |
+| `python_voicemode/config.py` | Add `AGENT_NAME`, `AGENT_PLATFORM`, `AUTO_WAKEABLE` config vars |
+| `python_voicemode/messaging.py` | **New** - Python message delivery library |
+| `python_voicemode/connect_registry.py` | Wire `_handle_agent_message` to use `messaging.deliver_message` |
+| `python_voicemode/tools/connect.py` | Default `agent_name`/`agent_platform` from config |
 | `tests/test_messaging.py` | **New** - Unit tests for messaging library |
 | `tests/test_connect_registry.py` | Update tests for new message delivery path |
 
 ## Implementation Order
 
-1. **`voice_mode/messaging.py`** + tests - standalone, no dependencies on other changes
-2. **`voice_mode/config.py`** - add new config vars
-3. **`voice_mode/connect_registry.py`** - replace subprocess with messaging library
-4. **`voice_mode/tools/connect.py`** - default params from config
+1. **`python_voicemode/messaging.py`** + tests - standalone, no dependencies on other changes
+2. **`python_voicemode/config.py`** - add new config vars
+3. **`python_voicemode/connect_registry.py`** - replace subprocess with messaging library
+4. **`python_voicemode/tools/connect.py`** - default params from config
 
 Steps 1-2 can be done in parallel. Steps 3-4 depend on both.
 

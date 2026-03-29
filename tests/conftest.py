@@ -4,13 +4,31 @@ import os
 import sys
 import tempfile
 import subprocess
+import inspect
+import asyncio
+from types import ModuleType, SimpleNamespace
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
-import pytest_asyncio
 
-# Add voice_mode to path for testing
+# Add python_voicemode to path for testing
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+
+class _SoundDeviceStub(ModuleType):
+    def __init__(self):
+        super().__init__("sounddevice")
+        self.InputStream = object
+        self.OutputStream = object
+        self.default = SimpleNamespace(device=[None, None])
+
+
+if "sounddevice" not in sys.modules:
+    sys.modules["sounddevice"] = _SoundDeviceStub()
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "asyncio: mark a test function as asyncio-driven")
 
 
 # Commands that should never run in tests - these affect system services
@@ -135,6 +153,19 @@ def isolate_home_directory(tmp_path, monkeypatch):
     monkeypatch.setattr("os.path.expanduser", mock_expanduser)
 
     yield fake_home
+
+
+def pytest_pyfunc_call(pyfuncitem):
+    """Run asyncio-marked coroutine tests without pytest-asyncio."""
+    test_func = pyfuncitem.obj
+    if not inspect.iscoroutinefunction(test_func):
+        return None
+    if "asyncio" not in pyfuncitem.keywords:
+        return None
+
+    kwargs = {name: pyfuncitem.funcargs[name] for name in pyfuncitem._fixtureinfo.argnames}
+    asyncio.run(test_func(**kwargs))
+    return True
 
 
 @pytest.fixture

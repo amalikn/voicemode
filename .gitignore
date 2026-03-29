@@ -95,6 +95,8 @@ node_modules/
 # Worktrees
 .worktrees/
 .claude/worktrees/
+.serena/
+.tmp_phase2_smoke/
 
 # Misc
 .cache/

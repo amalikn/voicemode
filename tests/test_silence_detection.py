@@ -1,4 +1,4 @@
-"""Tests for silence detection feature in voice_mode."""
+"""Tests for silence detection feature in python_voicemode."""
 
 import pytest
 import numpy as np
@@ -6,15 +6,15 @@ import time
 from unittest.mock import Mock, patch, MagicMock
 import sys
 
-# Mock webrtcvad before importing voice_mode modules
+# Mock webrtcvad before importing python_voicemode modules
 sys.modules['webrtcvad'] = MagicMock()
 
-from voice_mode.tools.converse import (
+from python_voicemode.tools.converse import (
     record_audio_with_silence_detection,
     record_audio,
     VAD_AVAILABLE
 )
-from voice_mode.config import (
+from python_voicemode.config import (
     SAMPLE_RATE,
     CHANNELS,
     VAD_CHUNK_DURATION_MS,
@@ -29,7 +29,7 @@ class TestSilenceDetection:
     @pytest.fixture
     def mock_sounddevice(self):
         """Mock sounddevice for testing."""
-        with patch('voice_mode.tools.converse.sd') as mock_sd:
+        with patch('python_voicemode.tools.converse.sd') as mock_sd:
             # Create mock audio chunks - some with "speech", some without
             speech_chunk = np.random.randint(-1000, 1000, 
                                            size=int(SAMPLE_RATE * VAD_CHUNK_DURATION_MS / 1000), 
@@ -52,7 +52,7 @@ class TestSilenceDetection:
     @pytest.fixture
     def mock_vad(self):
         """Mock VAD for testing."""
-        with patch('voice_mode.tools.converse.webrtcvad') as mock_webrtcvad:
+        with patch('python_voicemode.tools.converse.webrtcvad') as mock_webrtcvad:
             mock_vad_instance = Mock()
             mock_webrtcvad.Vad.return_value = mock_vad_instance
             
@@ -69,8 +69,8 @@ class TestSilenceDetection:
             yield mock_webrtcvad
     
     @pytest.mark.skip(reason="Mock sounddevice.rec() causing test to hang")
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_silence_detection_stops_early(self, mock_vad, mock_sounddevice):
         """Test that recording stops when silence is detected."""
         # Record with a long max duration
@@ -88,8 +88,8 @@ class TestSilenceDetection:
         assert mock_sounddevice.rec.call_count == 6
     
     @pytest.mark.skip(reason="Mock sounddevice.rec() causing test to hang")
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_no_speech_detected(self, mock_vad, mock_sounddevice):
         """Test behavior when no speech is detected."""
         # Configure VAD to never detect speech
@@ -106,8 +106,8 @@ class TestSilenceDetection:
         assert mock_sounddevice.rec.call_count >= min_chunks
     
     @pytest.mark.skip(reason="Mock sounddevice.rec() causing test to hang")
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_continuous_speech(self, mock_vad, mock_sounddevice):
         """Test that recording continues with continuous speech."""
         # Configure VAD to always detect speech
@@ -127,11 +127,11 @@ class TestSilenceDetection:
         expected_chunks = int(max_duration / (VAD_CHUNK_DURATION_MS / 1000))
         assert mock_sounddevice.rec.call_count == expected_chunks
     
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', True)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', True)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_silence_detection_disabled(self, mock_vad, mock_sounddevice):
         """Test that silence detection can be disabled."""
-        with patch('voice_mode.tools.converse.record_audio') as mock_record:
+        with patch('python_voicemode.tools.converse.record_audio') as mock_record:
             mock_record.return_value = np.array([1, 2, 3])
             
             result, speech_detected = record_audio_with_silence_detection(max_duration=5.0)
@@ -141,11 +141,11 @@ class TestSilenceDetection:
             assert np.array_equal(result, np.array([1, 2, 3]))
             assert speech_detected  # Should assume speech when disabled
     
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', False)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', False)
     def test_vad_not_available(self):
         """Test fallback when webrtcvad is not available."""
-        with patch('voice_mode.tools.converse.record_audio') as mock_record:
+        with patch('python_voicemode.tools.converse.record_audio') as mock_record:
             mock_record.return_value = np.array([1, 2, 3])
             
             result, speech_detected = record_audio_with_silence_detection(max_duration=5.0)
@@ -156,8 +156,8 @@ class TestSilenceDetection:
             assert speech_detected  # Should assume speech when VAD unavailable
     
     @pytest.mark.skip(reason="Mock sounddevice.rec() causing test to hang")
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_vad_error_handling(self, mock_vad, mock_sounddevice):
         """Test that VAD errors are handled gracefully."""
         # Configure VAD to raise an error
@@ -190,11 +190,11 @@ class TestSilenceDetection:
         expected_samples_10ms = int(24000 * 10 / 1000)
         assert expected_samples_10ms == 240
     
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_min_duration_parameter(self, mock_vad):
         """Test that min_duration parameter is respected."""
-        with patch('voice_mode.tools.converse.record_audio') as mock_record:
+        with patch('python_voicemode.tools.converse.record_audio') as mock_record:
             # When VAD is available but we pass a min_duration
             with patch('sounddevice.InputStream'):
                 with patch('queue.Queue') as mock_queue:
@@ -215,11 +215,11 @@ class TestSilenceDetection:
                         # If VAD fails, it should fall back to record_audio
                         pass
     
-    @patch('voice_mode.tools.converse.DISABLE_SILENCE_DETECTION', False)
-    @patch('voice_mode.tools.converse.VAD_AVAILABLE', True)
+    @patch('python_voicemode.tools.converse.DISABLE_SILENCE_DETECTION', False)
+    @patch('python_voicemode.tools.converse.VAD_AVAILABLE', True)
     def test_min_duration_with_disable_parameter(self, mock_vad):
         """Test that disable_silence_detection parameter works with min_duration."""
-        with patch('voice_mode.tools.converse.record_audio') as mock_record:
+        with patch('python_voicemode.tools.converse.record_audio') as mock_record:
             mock_record.return_value = np.array([1, 2, 3])
             
             # When silence detection is disabled via parameter

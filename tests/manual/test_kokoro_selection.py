@@ -5,8 +5,8 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
-from voice_mode.providers import get_tts_client_and_voice
-from voice_mode.provider_discovery import provider_registry
+from python_voicemode.providers import get_tts_client_and_voice
+from python_voicemode.provider_discovery import provider_registry
 
 
 async def test_provider_selection():

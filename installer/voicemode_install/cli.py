@@ -5,6 +5,8 @@ import os
 import shutil
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 import click
@@ -201,6 +203,105 @@ Examples:
 """
 
 
+DEFAULT_RUNTIME_OLLAMA_MODEL = "phi4-mini"
+
+
+def get_runtime_ollama_model() -> str:
+    """Return the Ollama model expected by the local voice runtime."""
+    return os.getenv("VOICEMODE_OLLAMA_MODEL", DEFAULT_RUNTIME_OLLAMA_MODEL)
+
+
+def _candidate_ollama_model_names(model: str) -> tuple[str, ...]:
+    """Return equivalent Ollama model names to accept during setup checks."""
+    normalized = model.strip()
+    if not normalized:
+        return tuple()
+    if ":" in normalized:
+        base, tag = normalized.rsplit(":", 1)
+        if tag == "latest":
+            return (normalized, base)
+        return (normalized,)
+    return (normalized, f"{normalized}:latest")
+
+
+def _resolve_installed_ollama_model(model: str, installed_models: set[str]) -> str | None:
+    """Resolve a configured model to an installed Ollama model name."""
+    for candidate in _candidate_ollama_model_names(model):
+        if candidate in installed_models:
+            return candidate
+    return None
+
+
+def check_ollama_runtime_model(model: str) -> tuple[bool, str]:
+    """Check whether the runtime Ollama model is available."""
+    if not check_command_exists("ollama"):
+        return False, "Ollama is not installed"
+
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:11434/api/tags", timeout=3.0) as response:
+            payload = json.load(response)
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+        return False, (
+            f"Ollama is installed, but the local server could not be reached to verify model '{model}'"
+        )
+
+    installed_models = {
+        entry.get("name")
+        for entry in payload.get("models", [])
+        if isinstance(entry, dict) and entry.get("name")
+    }
+    resolved_model = _resolve_installed_ollama_model(model, installed_models)
+    if resolved_model is not None:
+        return True, f"Ollama model '{resolved_model}' is installed"
+
+    return False, f"Ollama is running, but model '{model}' is not installed"
+
+
+def ensure_ollama_runtime_model(model: str, dry_run: bool, non_interactive: bool) -> bool:
+    """Prompt for the runtime Ollama model when it is missing."""
+    print_step(f"Checking Ollama runtime model ({model})...")
+    installed, detail = check_ollama_runtime_model(model)
+    if installed:
+        print_success(detail)
+        return True
+
+    print_warning(detail)
+    click.echo("The local voice runtime uses this model for:")
+    click.echo("  - spoken acknowledgements while deeper work is running")
+    click.echo("  - local routing hints")
+    click.echo("  - short spoken summaries")
+    click.echo(f"Recommended command: ollama pull {model}")
+
+    if dry_run:
+        print_step(f"[DRY RUN] Would prompt to run: ollama pull {model}")
+        return True
+
+    if non_interactive:
+        print_warning("Skipping Ollama model pull in non-interactive mode")
+        return False
+
+    if not check_command_exists("ollama"):
+        click.echo("Install Ollama first, then pull the model and restart VoiceMode setup if needed.")
+        return False
+
+    if not click.confirm(f"Pull Ollama model '{model}' now?", default=True):
+        return False
+
+    try:
+        result = subprocess.run(["ollama", "pull", model], check=True, capture_output=False)
+        if result.returncode == 0:
+            print_success(f"Ollama model '{model}' installed")
+            return True
+    except subprocess.CalledProcessError as exc:
+        print_error(f"Failed to pull Ollama model '{model}': {exc}")
+        return False
+    except FileNotFoundError:
+        print_error("Ollama command not found while trying to pull the model")
+        return False
+
+    return False
+
+
 @click.command(epilog=EPILOG, context_settings={'help_option_names': ['-h', '--help']})
 @click.option('-d', '--dry-run', is_flag=True, help='Show what would be installed without installing')
 @click.option('-v', '--voice-mode-version', default=None, help='Specific VoiceMode version to install')
@@ -209,7 +310,7 @@ Examples:
 @click.option('-n', '--non-interactive', is_flag=True, help='Run without prompts (deprecated: use --yes/-y)')
 @click.option('-m', '--model', default='base', help='Whisper model to use (base, small, medium, large-v2)')
 @click.version_option(__version__, '-V', '--version')
-def main(dry_run, voice_mode_version, skip_services, non_interactive, model):
+def main(dry_run, python_voicemode_version, skip_services, non_interactive, model):
     """VoiceMode Installer - Install VoiceMode and its system dependencies.
 
     This installer will:
@@ -364,7 +465,7 @@ def main(dry_run, voice_mode_version, skip_services, non_interactive, model):
         print_step("Installing VoiceMode...")
         installer = PackageInstaller(platform_info, dry_run=dry_run, non_interactive=non_interactive)
 
-        if installer.install_voicemode(version=voice_mode_version):
+        if installer.install_voicemode(version=python_voicemode_version):
             print_success("VoiceMode installed successfully")
             logger.log_install('voicemode', ['voice-mode'], True)
         else:
@@ -473,6 +574,16 @@ def main(dry_run, voice_mode_version, skip_services, non_interactive, model):
                 model_flag = f" --model {model}" if model != 'base' else ''
                 click.echo(f"  voicemode whisper install{model_flag}")
                 click.echo("  voicemode kokoro install")
+
+        # Completion summary
+        click.echo()
+        click.echo("━" * 70)
+        click.echo(click.style("Runtime Helper Model", fg='blue', bold=True))
+        click.echo("━" * 70)
+        click.echo()
+
+        runtime_model = get_runtime_ollama_model()
+        ensure_ollama_runtime_model(runtime_model, dry_run=dry_run, non_interactive=non_interactive)
 
         # Completion summary
         click.echo()

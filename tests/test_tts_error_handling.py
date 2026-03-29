@@ -4,7 +4,7 @@ import asyncio
 import pytest
 from unittest.mock import Mock, AsyncMock, patch, MagicMock
 import httpx
-from voice_mode.simple_failover import simple_tts_failover
+from python_voicemode.simple_failover import simple_tts_failover
 
 
 class TestTTSErrorHandling:
@@ -13,9 +13,9 @@ class TestTTSErrorHandling:
     @pytest.mark.asyncio
     async def test_connection_refused_all_endpoints(self):
         """Test when all TTS endpoints refuse connection."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1', 'https://api.openai.com/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', 'test-key'), \
-             patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1', 'https://api.openai.com/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', 'test-key'), \
+             patch('python_voicemode.core.text_to_speech') as mock_tts:
 
             # Simulate connection refused for both endpoints
             mock_tts.side_effect = [
@@ -40,9 +40,9 @@ class TestTTSErrorHandling:
     @pytest.mark.asyncio
     async def test_authentication_error_openai(self):
         """Test authentication error on OpenAI endpoint."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['https://api.openai.com/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', 'invalid-key'), \
-             patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['https://api.openai.com/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', 'invalid-key'), \
+             patch('python_voicemode.core.text_to_speech') as mock_tts:
 
             # Simulate auth error
             mock_tts.side_effect = Exception("Incorrect API key provided")
@@ -62,8 +62,8 @@ class TestTTSErrorHandling:
     @pytest.mark.skip(reason="Test needs refactoring - local services may be available that don't require API key")
     async def test_no_api_key_error(self):
         """Test missing API key for cloud endpoint."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['https://api.openai.com/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', None):
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['https://api.openai.com/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', None):
 
             success, metrics, config = await simple_tts_failover(
                 text="Hello world",
@@ -78,9 +78,9 @@ class TestTTSErrorHandling:
     @pytest.mark.asyncio
     async def test_successful_tts(self):
         """Test successful TTS with provider info."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', None), \
-             patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', None), \
+             patch('python_voicemode.core.text_to_speech') as mock_tts:
 
             # Simulate successful TTS
             mock_tts.return_value = (True, {'duration': 1.5})
@@ -100,9 +100,9 @@ class TestTTSErrorHandling:
     @pytest.mark.asyncio
     async def test_fallback_to_openai(self):
         """Test falling back from local to OpenAI."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1', 'https://api.openai.com/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', 'valid-key'), \
-             patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1', 'https://api.openai.com/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', 'valid-key'), \
+             patch('python_voicemode.core.text_to_speech') as mock_tts:
 
             # First fails, second succeeds
             mock_tts.side_effect = [
@@ -123,9 +123,9 @@ class TestTTSErrorHandling:
     @pytest.mark.asyncio
     async def test_voice_mapping(self):
         """Test that voices are mapped correctly for different providers."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['https://api.openai.com/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', 'test-key'), \
-             patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['https://api.openai.com/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', 'test-key'), \
+             patch('python_voicemode.core.text_to_speech') as mock_tts:
 
             # Simulate successful TTS
             mock_tts.return_value = (True, {})
@@ -145,9 +145,9 @@ class TestTTSErrorHandling:
     @pytest.mark.asyncio
     async def test_detailed_error_info(self):
         """Test that detailed error info is included for each endpoint."""
-        with patch('voice_mode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1', 'https://api.openai.com/v1']), \
-             patch('voice_mode.simple_failover.OPENAI_API_KEY', 'test-key'), \
-             patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.simple_failover.TTS_BASE_URLS', ['http://localhost:8880/v1', 'https://api.openai.com/v1']), \
+             patch('python_voicemode.simple_failover.OPENAI_API_KEY', 'test-key'), \
+             patch('python_voicemode.core.text_to_speech') as mock_tts:
 
             # Different errors for each endpoint
             mock_tts.side_effect = [

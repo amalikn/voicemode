@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import pytest
 
-from voice_mode.conch import Conch
+from python_voicemode.conch import Conch
 
 
 @pytest.fixture
@@ -140,19 +140,19 @@ class TestConchConfig:
 
     def test_conch_enabled_default(self):
         """CONCH_ENABLED defaults to True."""
-        from voice_mode.config import CONCH_ENABLED
+        from python_voicemode.config import CONCH_ENABLED
         # Default should be True (unless env var overrides)
         assert isinstance(CONCH_ENABLED, bool)
 
     def test_conch_timeout_default(self):
         """CONCH_TIMEOUT defaults to 60 seconds."""
-        from voice_mode.config import CONCH_TIMEOUT
+        from python_voicemode.config import CONCH_TIMEOUT
         assert isinstance(CONCH_TIMEOUT, float)
         assert CONCH_TIMEOUT == 60.0
 
     def test_conch_check_interval_default(self):
         """CONCH_CHECK_INTERVAL defaults to 0.5 seconds."""
-        from voice_mode.config import CONCH_CHECK_INTERVAL
+        from python_voicemode.config import CONCH_CHECK_INTERVAL
         assert isinstance(CONCH_CHECK_INTERVAL, float)
         assert CONCH_CHECK_INTERVAL == 0.5
 
@@ -160,35 +160,35 @@ class TestConchConfig:
         """CONCH_ENABLED can be set via environment variable."""
         import os
         import importlib
-        import voice_mode.config
+        import python_voicemode.config
 
         # Test with false
         os.environ["VOICEMODE_CONCH_ENABLED"] = "false"
-        importlib.reload(voice_mode.config)
-        assert voice_mode.config.CONCH_ENABLED is False
+        importlib.reload(python_voicemode.config)
+        assert python_voicemode.config.CONCH_ENABLED is False
 
         # Test with true
         os.environ["VOICEMODE_CONCH_ENABLED"] = "true"
-        importlib.reload(voice_mode.config)
-        assert voice_mode.config.CONCH_ENABLED is True
+        importlib.reload(python_voicemode.config)
+        assert python_voicemode.config.CONCH_ENABLED is True
 
         # Clean up
         del os.environ["VOICEMODE_CONCH_ENABLED"]
-        importlib.reload(voice_mode.config)
+        importlib.reload(python_voicemode.config)
 
     def test_conch_timeout_env_var(self):
         """CONCH_TIMEOUT can be set via environment variable."""
         import os
         import importlib
-        import voice_mode.config
+        import python_voicemode.config
 
         os.environ["VOICEMODE_CONCH_TIMEOUT"] = "120"
-        importlib.reload(voice_mode.config)
-        assert voice_mode.config.CONCH_TIMEOUT == 120.0
+        importlib.reload(python_voicemode.config)
+        assert python_voicemode.config.CONCH_TIMEOUT == 120.0
 
         # Clean up
         del os.environ["VOICEMODE_CONCH_TIMEOUT"]
-        importlib.reload(voice_mode.config)
+        importlib.reload(python_voicemode.config)
 
 
 def _try_acquire_worker(name: str, queue: multiprocessing.Queue, hold_time: float = 0.5):

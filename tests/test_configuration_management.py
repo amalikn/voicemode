@@ -5,7 +5,7 @@ import pytest
 import tempfile
 from pathlib import Path
 from unittest.mock import patch, mock_open, MagicMock
-from voice_mode.tools.configuration_management import (
+from python_voicemode.tools.configuration_management import (
     update_config,
     list_config_keys,
     write_env_file,
@@ -48,7 +48,7 @@ class TestConfigurationManagement:
                 f.write("EXISTING_KEY=old_value\n")
             
             # Patch the config path
-            with patch("voice_mode.tools.configuration_management.USER_CONFIG_PATH", Path(temp_path)):
+            with patch("python_voicemode.tools.configuration_management.USER_CONFIG_PATH", Path(temp_path)):
                 result = await update_config.fn("TEST_KEY", "test_value")
                 
                 # Should return a message (success or error)
@@ -68,7 +68,7 @@ class TestConfigurationManagement:
         assert callable(update_config.fn)
         
         # Test with a mock path that doesn't exist
-        with patch("voice_mode.tools.configuration_management.USER_CONFIG_PATH", Path("/nonexistent/test.env")):
+        with patch("python_voicemode.tools.configuration_management.USER_CONFIG_PATH", Path("/nonexistent/test.env")):
             with patch("pathlib.Path.mkdir"), patch("pathlib.Path.exists", return_value=False):
                 with patch("builtins.open", mock_open()) as mock_file:
                     result = await update_config.fn("TEST_KEY", "test_value")
@@ -95,7 +95,7 @@ class TestConfigurationManagement:
         assert len(list_result) > 100  # Should have substantial content
         
         # Update should return a message (even if it fails due to permissions)
-        with patch("voice_mode.tools.configuration_management.USER_CONFIG_PATH", Path("/tmp/test_config.env")):
+        with patch("python_voicemode.tools.configuration_management.USER_CONFIG_PATH", Path("/tmp/test_config.env")):
             with patch("pathlib.Path.mkdir"):
                 try:
                     update_result = await update_config.fn("TEST_INTEGRATION", "test")
@@ -447,7 +447,7 @@ class TestMultilineValueHandling:
             temp_file = Path(temp_path)
 
             # Update only VOICEMODE_WHISPER_MODEL
-            with patch("voice_mode.tools.configuration_management.USER_CONFIG_PATH", temp_file):
+            with patch("python_voicemode.tools.configuration_management.USER_CONFIG_PATH", temp_file):
                 result = asyncio.run(update_config.fn("VOICEMODE_WHISPER_MODEL", "large-v1"))
 
             # Should succeed

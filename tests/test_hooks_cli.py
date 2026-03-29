@@ -8,7 +8,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 from click.testing import CliRunner
 
-from voice_mode.cli_commands.claude import (
+from python_voicemode.cli_commands.claude import (
     claude,
     get_available_hooks,
     get_installed_hook_names,
@@ -36,7 +36,7 @@ def temp_settings_dir(tmp_path, monkeypatch):
     claude_dir.mkdir()
 
     # Patch the SETTINGS_PATHS in the claude CLI module
-    from voice_mode.cli_commands import claude as claude_mod
+    from python_voicemode.cli_commands import claude as claude_mod
     monkeypatch.setattr(claude_mod, 'SETTINGS_PATHS', {
         'user': claude_dir / 'settings.json',
         'project': tmp_path / '.claude' / 'settings.json',
@@ -330,7 +330,7 @@ class TestResolveHookCommand:
         home_bin = fake_home / '.voicemode' / 'bin' / 'voicemode-hook-receiver'
 
         with patch('shutil.which', return_value=None):
-            with patch('voice_mode.cli_commands.claude.Path.home', return_value=fake_home):
+            with patch('python_voicemode.cli_commands.claude.Path.home', return_value=fake_home):
                 result = resolve_hook_command()
                 assert str(home_bin) in result
                 assert '|| true' in result
@@ -380,7 +380,7 @@ class TestHooksAddCommand:
 
     def test_add_all_hooks(self, runner, temp_settings_dir):
         """Should add all hooks to user settings."""
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             result = runner.invoke(claude, ['hooks', 'add'])
 
         assert result.exit_code == 0
@@ -400,7 +400,7 @@ class TestHooksAddCommand:
 
     def test_add_single_hook(self, runner, temp_settings_dir):
         """Should add only specified hook."""
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             result = runner.invoke(claude, ['hooks', 'add', 'pre-tool-use'])
 
         assert result.exit_code == 0
@@ -414,7 +414,7 @@ class TestHooksAddCommand:
 
     def test_add_hooks_idempotent(self, runner, temp_settings_dir):
         """Should not duplicate on repeated adds."""
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             # First add
             result1 = runner.invoke(claude, ['hooks', 'add', 'pre-tool-use'])
             assert result1.exit_code == 0
@@ -439,7 +439,7 @@ class TestHooksAddCommand:
 
     def test_add_to_project_scope(self, runner, temp_settings_dir):
         """Should add to project settings with --scope."""
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             result = runner.invoke(claude, ['hooks', 'add', '-s', 'project'])
 
         assert result.exit_code == 0
@@ -452,7 +452,7 @@ class TestHooksRemoveCommand:
     def test_remove_all_hooks(self, runner, temp_settings_dir):
         """Should remove all VoiceMode hooks."""
         # First add hooks
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             runner.invoke(claude, ['hooks', 'add'])
 
         # Then remove
@@ -469,7 +469,7 @@ class TestHooksRemoveCommand:
     def test_remove_single_hook(self, runner, temp_settings_dir):
         """Should remove only specified hook."""
         # Add hooks first
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             runner.invoke(claude, ['hooks', 'add'])
 
         # Remove one
@@ -512,7 +512,7 @@ class TestHooksListCommand:
     def test_list_installed_hooks(self, runner, temp_settings_dir):
         """Should show installed hooks."""
         # Add hooks first
-        with patch('voice_mode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
+        with patch('python_voicemode.cli_commands.claude.resolve_hook_command', return_value='voicemode-hook-receiver || true'):
             runner.invoke(claude, ['hooks', 'add', 'pre-tool-use'])
 
         result = runner.invoke(claude, ['hooks', 'list'])
@@ -546,7 +546,7 @@ class TestInstallHookReceiver:
         fake_home = tmp_path / 'home'
         fake_home.mkdir(exist_ok=True)
 
-        with patch('voice_mode.cli_commands.claude.Path.home', return_value=fake_home):
+        with patch('python_voicemode.cli_commands.claude.Path.home', return_value=fake_home):
             result = install_hook_receiver()
 
         expected = fake_home / '.voicemode' / 'bin' / 'voicemode-hook-receiver'
@@ -564,7 +564,7 @@ class TestInstallHookReceiver:
         fake_home = tmp_path / 'home'
         fake_home.mkdir(exist_ok=True)
 
-        with patch('voice_mode.cli_commands.claude.Path.home', return_value=fake_home):
+        with patch('python_voicemode.cli_commands.claude.Path.home', return_value=fake_home):
             install_hook_receiver()
             result = install_hook_receiver()
 
@@ -582,7 +582,7 @@ class TestGetInstalledHookNames:
 
     def test_no_voicemode_hooks(self, temp_settings_dir):
         """Should return empty set when no VoiceMode hooks are installed."""
-        from voice_mode.cli_commands import claude as claude_mod
+        from python_voicemode.cli_commands import claude as claude_mod
         settings_path = claude_mod.SETTINGS_PATHS['user']
         settings_path.write_text(json.dumps({
             'hooks': {
@@ -596,7 +596,7 @@ class TestGetInstalledHookNames:
 
     def test_with_installed_hooks(self, temp_settings_dir):
         """Should return hook names for installed VoiceMode hooks."""
-        from voice_mode.cli_commands import claude as claude_mod
+        from python_voicemode.cli_commands import claude as claude_mod
         settings_path = claude_mod.SETTINGS_PATHS['user']
         settings_path.write_text(json.dumps({
             'hooks': {
@@ -613,7 +613,7 @@ class TestGetInstalledHookNames:
 
     def test_handles_read_error(self):
         """Should return empty set on read error."""
-        with patch('voice_mode.cli_commands.claude.read_settings', side_effect=Exception("file error")):
+        with patch('python_voicemode.cli_commands.claude.read_settings', side_effect=Exception("file error")):
             installed = get_installed_hook_names('user')
         assert installed == set()
 
@@ -623,7 +623,7 @@ class TestHookNameAddCompletion:
 
     def test_suggests_uninstalled_hooks(self, temp_settings_dir):
         """Should only suggest hooks that are NOT installed."""
-        from voice_mode.cli_commands import claude as claude_mod
+        from python_voicemode.cli_commands import claude as claude_mod
         settings_path = claude_mod.SETTINGS_PATHS['user']
         settings_path.write_text(json.dumps({
             'hooks': {
@@ -670,7 +670,7 @@ class TestHookNameRemoveCompletion:
 
     def test_suggests_installed_hooks(self, temp_settings_dir):
         """Should only suggest hooks that ARE installed."""
-        from voice_mode.cli_commands import claude as claude_mod
+        from python_voicemode.cli_commands import claude as claude_mod
         settings_path = claude_mod.SETTINGS_PATHS['user']
         settings_path.write_text(json.dumps({
             'hooks': {
@@ -699,7 +699,7 @@ class TestHookNameRemoveCompletion:
 
     def test_filters_by_prefix(self, temp_settings_dir):
         """Should filter completions by prefix."""
-        from voice_mode.cli_commands import claude as claude_mod
+        from python_voicemode.cli_commands import claude as claude_mod
         settings_path = claude_mod.SETTINGS_PATHS['user']
         settings_path.write_text(json.dumps({
             'hooks': {

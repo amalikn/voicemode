@@ -1,12 +1,12 @@
-"""Tests for voice_mode.tools.connect_status."""
+"""Tests for python_voicemode.tools.connect_status."""
 
 import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from voice_mode.connect.types import UserInfo
-from voice_mode.tools.connect_status import connect_status as connect_status_tool
+from python_voicemode.connect.types import UserInfo
+from python_voicemode.tools.connect_status import connect_status as connect_status_tool
 
 # FastMCP 2.x wraps tools as FunctionTool (with .fn attribute),
 # FastMCP 3.x returns the raw function.
@@ -38,7 +38,7 @@ class TestConnectStatusDisabled:
     async def test_returns_disabled_message(self):
         """connect_status returns helpful message when Connect is disabled."""
         with patch(
-            "voice_mode.connect.config.is_enabled", return_value=False
+            "python_voicemode.connect.config.is_enabled", return_value=False
         ):
             result = await _connect_status_fn()
 
@@ -55,10 +55,10 @@ class TestConnectStatusNotConnected:
 
         with (
             patch(
-                "voice_mode.connect.config.is_enabled", return_value=True
+                "python_voicemode.connect.config.is_enabled", return_value=True
             ),
             patch(
-                "voice_mode.connect.client.get_client",
+                "python_voicemode.connect.client.get_client",
                 return_value=mock_client,
             ),
         ):
@@ -71,10 +71,10 @@ class TestConnectStatusNotConnected:
         """connect_status returns status text when set_presence is not given."""
         with (
             patch(
-                "voice_mode.connect.config.is_enabled", return_value=True
+                "python_voicemode.connect.config.is_enabled", return_value=True
             ),
             patch(
-                "voice_mode.connect.client.get_client",
+                "python_voicemode.connect.client.get_client",
                 return_value=mock_client,
             ),
         ):
@@ -88,7 +88,7 @@ class TestSetPresenceValidation:
     @pytest.mark.asyncio
     async def test_invalid_presence_rejected(self, mock_client):
         """Invalid presence values return an error message."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         result = await _set_presence(mock_client, "invisible")
         assert "Invalid presence" in result
@@ -98,7 +98,7 @@ class TestSetPresenceValidation:
 
     @pytest.mark.asyncio
     async def test_random_string_rejected(self, mock_client):
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         result = await _set_presence(mock_client, "online")
         assert "Invalid presence" in result
@@ -106,7 +106,7 @@ class TestSetPresenceValidation:
     @pytest.mark.asyncio
     async def test_not_connected_returns_error(self, mock_client):
         """Cannot set presence when disconnected."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         mock_client.is_connected = False
         result = await _set_presence(mock_client, "available")
@@ -118,11 +118,11 @@ class TestAliasMapping:
     @pytest.mark.asyncio
     async def test_busy_maps_to_away(self, mock_client):
         """'busy' alias maps to 'away'."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -134,11 +134,11 @@ class TestAliasMapping:
     @pytest.mark.asyncio
     async def test_dnd_maps_to_away(self, mock_client):
         """'dnd' alias maps to 'away'."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -150,11 +150,11 @@ class TestAliasMapping:
     @pytest.mark.asyncio
     async def test_unavailable_maps_to_away(self, mock_client):
         """'unavailable' alias maps to 'away'."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -168,7 +168,7 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_already_registered_returns_existing(self, mock_client):
         """Returns existing user when already registered."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         user = _make_user()
         mock_client._primary_user = user
@@ -181,7 +181,7 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_explicit_username_finds_existing(self, mock_client):
         """With username, finds existing user and registers on WebSocket."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         user = _make_user()
         mock_client.user_manager.get.return_value = user
@@ -193,14 +193,14 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_explicit_username_creates_when_missing(self, mock_client):
         """With username, creates user when not found on filesystem."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         new_user = _make_user(name="newbot", display_name="NewBot")
         mock_client.user_manager.get.return_value = None
         mock_client.user_manager.add.return_value = new_user
 
         with patch(
-            "voice_mode.connect.config.get_agent_name",
+            "python_voicemode.connect.config.get_agent_name",
             return_value="NewBot",
         ):
             result = await _ensure_user_registered(
@@ -216,7 +216,7 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_explicit_username_normalizes_case(self, mock_client):
         """Username is lowered and stripped."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         user = _make_user()
         mock_client.user_manager.get.return_value = user
@@ -227,7 +227,7 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_auto_discover_users(self, mock_client):
         """Without username, discovers users from filesystem."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         user = _make_user()
         mock_client.user_manager.list.return_value = [user]
@@ -239,14 +239,14 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_preconfigured_users_fallback(self, mock_client):
         """Falls back to preconfigured users when no subscribed users."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         user = _make_user(name="alice")
         mock_client.user_manager.list.return_value = []
         mock_client.user_manager.get.return_value = user
 
         with patch(
-            "voice_mode.connect.config.get_preconfigured_users",
+            "python_voicemode.connect.config.get_preconfigured_users",
             return_value=["alice"],
         ):
             result = await _ensure_user_registered(mock_client)
@@ -257,12 +257,12 @@ class TestEnsureUserRegistered:
     @pytest.mark.asyncio
     async def test_no_users_found_returns_empty(self, mock_client):
         """Returns empty list when no users found anywhere."""
-        from voice_mode.tools.connect_status import _ensure_user_registered
+        from python_voicemode.tools.connect_status import _ensure_user_registered
 
         mock_client.user_manager.list.return_value = []
 
         with patch(
-            "voice_mode.connect.config.get_preconfigured_users",
+            "python_voicemode.connect.config.get_preconfigured_users",
             return_value=[],
         ):
             result = await _ensure_user_registered(mock_client)
@@ -275,10 +275,10 @@ class TestSetPresenceMissingUser:
     @pytest.mark.asyncio
     async def test_no_users_returns_error(self, mock_client):
         """Returns error when no users can be found."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[],
         ):
@@ -291,12 +291,12 @@ class TestSetPresenceAvailable:
     @pytest.mark.asyncio
     async def test_available_downgrades_without_wake(self, mock_client):
         """'available' downgrades to 'away' without inbox-live symlink."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
 
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -313,7 +313,7 @@ class TestSetPresenceAvailable:
     @pytest.mark.asyncio
     async def test_available_succeeds_with_wake(self, mock_client, tmp_path):
         """'available' succeeds when session has team and inbox-live is valid."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
 
@@ -332,13 +332,13 @@ class TestSetPresenceAvailable:
 
         with (
             patch(
-                "voice_mode.tools.connect_status._ensure_user_registered",
+                "python_voicemode.tools.connect_status._ensure_user_registered",
                 new_callable=AsyncMock,
                 return_value=[user],
             ),
             patch("pathlib.Path.home", return_value=tmp_path),
             patch(
-                "voice_mode.tools.connect_status._get_session_data",
+                "python_voicemode.tools.connect_status._get_session_data",
                 return_value=session_data,
             ),
         ):
@@ -353,7 +353,7 @@ class TestSetPresenceAvailable:
     @pytest.mark.asyncio
     async def test_available_sends_capabilities_update(self, mock_client, tmp_path):
         """Going 'available' sends correct WebSocket message."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
 
@@ -371,13 +371,13 @@ class TestSetPresenceAvailable:
 
         with (
             patch(
-                "voice_mode.tools.connect_status._ensure_user_registered",
+                "python_voicemode.tools.connect_status._ensure_user_registered",
                 new_callable=AsyncMock,
                 return_value=[user],
             ),
             patch("pathlib.Path.home", return_value=tmp_path),
             patch(
-                "voice_mode.tools.connect_status._get_session_data",
+                "python_voicemode.tools.connect_status._get_session_data",
                 return_value=session_data,
             ),
         ):
@@ -395,7 +395,7 @@ class TestSetPresenceAvailable:
     @pytest.mark.asyncio
     async def test_available_includes_display_names(self, mock_client, tmp_path):
         """Available response lists user display names."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user(display_name="Cora 7")
 
@@ -413,13 +413,13 @@ class TestSetPresenceAvailable:
 
         with (
             patch(
-                "voice_mode.tools.connect_status._ensure_user_registered",
+                "python_voicemode.tools.connect_status._ensure_user_registered",
                 new_callable=AsyncMock,
                 return_value=[user],
             ),
             patch("pathlib.Path.home", return_value=tmp_path),
             patch(
-                "voice_mode.tools.connect_status._get_session_data",
+                "python_voicemode.tools.connect_status._get_session_data",
                 return_value=session_data,
             ),
         ):
@@ -432,7 +432,7 @@ class TestSetPresenceStaleSymlink:
     @pytest.mark.asyncio
     async def test_downgrades_without_removing_others_symlink(self, mock_client, tmp_path):
         """Downgrades to 'away' but leaves existing symlink intact (may belong to another session)."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
 
@@ -447,13 +447,13 @@ class TestSetPresenceStaleSymlink:
 
         with (
             patch(
-                "voice_mode.tools.connect_status._ensure_user_registered",
+                "python_voicemode.tools.connect_status._ensure_user_registered",
                 new_callable=AsyncMock,
                 return_value=[user],
             ),
             patch("pathlib.Path.home", return_value=tmp_path),
             patch(
-                "voice_mode.tools.connect_status._get_session_data",
+                "python_voicemode.tools.connect_status._get_session_data",
                 return_value=session_data,
             ),
         ):
@@ -467,7 +467,7 @@ class TestSetPresenceStaleSymlink:
     @pytest.mark.asyncio
     async def test_stale_symlink_replaced_with_correct_team(self, mock_client, tmp_path):
         """Stale inbox-live pointing to wrong team is replaced."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
 
@@ -488,13 +488,13 @@ class TestSetPresenceStaleSymlink:
 
         with (
             patch(
-                "voice_mode.tools.connect_status._ensure_user_registered",
+                "python_voicemode.tools.connect_status._ensure_user_registered",
                 new_callable=AsyncMock,
                 return_value=[user],
             ),
             patch("pathlib.Path.home", return_value=tmp_path),
             patch(
-                "voice_mode.tools.connect_status._get_session_data",
+                "python_voicemode.tools.connect_status._get_session_data",
                 return_value=session_data,
             ),
         ):
@@ -511,13 +511,13 @@ class TestSetPresenceAway:
     @pytest.mark.asyncio
     async def test_away_sends_online_wire_presence(self, mock_client):
         """'away' maps to 'online' on the wire protocol."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
         mock_client.user_manager.is_subscribed.return_value = True
 
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -530,12 +530,12 @@ class TestSetPresenceAway:
     @pytest.mark.asyncio
     async def test_away_does_not_check_subscription(self, mock_client):
         """'away' does not require inbox-live subscription."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
 
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -550,14 +550,14 @@ class TestSetPresenceWebSocketError:
     @pytest.mark.asyncio
     async def test_ws_send_failure(self, mock_client):
         """WebSocket send failure returns error message."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         user = _make_user()
         mock_client.user_manager.is_subscribed.return_value = True
         mock_client._ws.send.side_effect = Exception("Connection lost")
 
         with patch(
-            "voice_mode.tools.connect_status._ensure_user_registered",
+            "python_voicemode.tools.connect_status._ensure_user_registered",
             new_callable=AsyncMock,
             return_value=[user],
         ):
@@ -570,7 +570,7 @@ class TestSetPresenceWebSocketError:
 class TestGetSessionData:
     def test_direct_lookup_via_env_var(self, tmp_path):
         """Finds session file via CLAUDE_SESSION_ID env var."""
-        from voice_mode.tools.connect_status import _get_session_data
+        from python_voicemode.tools.connect_status import _get_session_data
 
         # Create a session file
         sessions_dir = tmp_path / ".voicemode" / "sessions"
@@ -593,7 +593,7 @@ class TestGetSessionData:
 
     def test_fallback_scan_by_agent_name(self, tmp_path):
         """Falls back to scanning sessions dir when CLAUDE_SESSION_ID not set."""
-        from voice_mode.tools.connect_status import _get_session_data
+        from python_voicemode.tools.connect_status import _get_session_data
 
         sessions_dir = tmp_path / ".voicemode" / "sessions"
         sessions_dir.mkdir(parents=True)
@@ -624,7 +624,7 @@ class TestGetSessionData:
 
     def test_fallback_returns_empty_without_agent_name(self, tmp_path):
         """Returns empty dict when CLAUDE_SESSION_ID not set and no agent_name."""
-        from voice_mode.tools.connect_status import _get_session_data
+        from python_voicemode.tools.connect_status import _get_session_data
 
         with (
             patch.dict("os.environ", {}, clear=False),
@@ -639,7 +639,7 @@ class TestGetSessionData:
 
     def test_fallback_no_matching_agent(self, tmp_path):
         """Returns empty dict when no session matches agent_name."""
-        from voice_mode.tools.connect_status import _get_session_data
+        from python_voicemode.tools.connect_status import _get_session_data
 
         sessions_dir = tmp_path / ".voicemode" / "sessions"
         sessions_dir.mkdir(parents=True)
@@ -662,7 +662,7 @@ class TestSetPresenceMultipleUsers:
     @pytest.mark.asyncio
     async def test_multiple_users_all_included(self, mock_client, tmp_path):
         """All users are included in the capabilities_update."""
-        from voice_mode.tools.connect_status import _set_presence
+        from python_voicemode.tools.connect_status import _set_presence
 
         users = [
             _make_user(name="cora", display_name="Cora 7"),
@@ -683,13 +683,13 @@ class TestSetPresenceMultipleUsers:
 
         with (
             patch(
-                "voice_mode.tools.connect_status._ensure_user_registered",
+                "python_voicemode.tools.connect_status._ensure_user_registered",
                 new_callable=AsyncMock,
                 return_value=users,
             ),
             patch("pathlib.Path.home", return_value=tmp_path),
             patch(
-                "voice_mode.tools.connect_status._get_session_data",
+                "python_voicemode.tools.connect_status._get_session_data",
                 return_value=session_data,
             ),
         ):

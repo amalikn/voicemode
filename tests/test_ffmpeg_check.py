@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 import sys
 import platform
 
-from voice_mode.utils.ffmpeg_check import (
+from python_voicemode.utils.ffmpeg_check import (
     check_ffmpeg,
     check_ffprobe,
     get_ffmpeg_version,
@@ -84,7 +84,7 @@ class TestFFmpegDetection:
     def test_check_and_report_ffmpeg_all_installed(self, capsys):
         """Test reporting when everything is installed."""
         with patch('shutil.which', return_value='/usr/bin/ffmpeg'):
-            with patch('voice_mode.utils.ffmpeg_check.get_ffmpeg_version', return_value="4.4.2"):
+            with patch('python_voicemode.utils.ffmpeg_check.get_ffmpeg_version', return_value="4.4.2"):
                 result = check_and_report_ffmpeg()
                 assert result is True
                 captured = capsys.readouterr()
@@ -101,13 +101,13 @@ class TestFFmpegDetection:
     
     def test_ensure_ffmpeg_or_exit_installed(self):
         """Test ensure_ffmpeg_or_exit when FFmpeg is installed."""
-        with patch('voice_mode.utils.ffmpeg_check.check_and_report_ffmpeg', return_value=True):
+        with patch('python_voicemode.utils.ffmpeg_check.check_and_report_ffmpeg', return_value=True):
             # Should not raise or exit
             ensure_ffmpeg_or_exit()
     
     def test_ensure_ffmpeg_or_exit_missing(self):
         """Test ensure_ffmpeg_or_exit when FFmpeg is missing."""
-        with patch('voice_mode.utils.ffmpeg_check.check_and_report_ffmpeg', return_value=False):
+        with patch('python_voicemode.utils.ffmpeg_check.check_and_report_ffmpeg', return_value=False):
             with patch('sys.exit') as mock_exit:
                 ensure_ffmpeg_or_exit()
                 mock_exit.assert_called_once_with(1)

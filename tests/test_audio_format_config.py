@@ -17,7 +17,7 @@ class TestAudioFormatConfiguration:
     def test_default_audio_format(self):
         """Test that default audio format is pcm"""
         # Import after setting env vars
-        from voice_mode.config import AUDIO_FORMAT, TTS_AUDIO_FORMAT, STT_AUDIO_FORMAT
+        from python_voicemode.config import AUDIO_FORMAT, TTS_AUDIO_FORMAT, STT_AUDIO_FORMAT
         
         assert AUDIO_FORMAT == "pcm"
         assert TTS_AUDIO_FORMAT == "pcm"  # Default changed to PCM for optimal streaming
@@ -32,10 +32,10 @@ class TestAudioFormatConfiguration:
         """Test custom audio format configuration"""
         # Need to reload the module to pick up new env vars
         import importlib
-        import voice_mode.config
-        importlib.reload(voice_mode.config)
+        import python_voicemode.config
+        importlib.reload(python_voicemode.config)
         
-        from voice_mode.config import AUDIO_FORMAT, TTS_AUDIO_FORMAT, STT_AUDIO_FORMAT
+        from python_voicemode.config import AUDIO_FORMAT, TTS_AUDIO_FORMAT, STT_AUDIO_FORMAT
         
         assert AUDIO_FORMAT == "mp3"
         assert TTS_AUDIO_FORMAT == "flac"
@@ -43,7 +43,7 @@ class TestAudioFormatConfiguration:
     
     def test_validate_audio_format(self):
         """Test audio format validation for providers"""
-        from voice_mode.config import validate_audio_format
+        from python_voicemode.config import validate_audio_format
         
         # OpenAI supports opus
         assert validate_audio_format("opus", "openai", "tts") == "opus"
@@ -62,7 +62,7 @@ class TestAudioFormatConfiguration:
     
     def test_get_provider_supported_formats(self):
         """Test getting supported formats for providers"""
-        from voice_mode.config import get_provider_supported_formats
+        from python_voicemode.config import get_provider_supported_formats
         
         # OpenAI TTS formats
         openai_tts = get_provider_supported_formats("openai", "tts")
@@ -82,7 +82,7 @@ class TestAudioFormatConfiguration:
     
     def test_get_audio_loader_for_format(self):
         """Test getting correct audio loader for formats"""
-        from voice_mode.config import get_audio_loader_for_format
+        from python_voicemode.config import get_audio_loader_for_format
         from pydub import AudioSegment
         
         # Test known formats
@@ -102,7 +102,7 @@ class TestAudioFormatConfiguration:
     
     def test_get_format_export_params(self):
         """Test getting export parameters for formats"""
-        from voice_mode.config import get_format_export_params, MP3_BITRATE, OPUS_BITRATE
+        from python_voicemode.config import get_format_export_params, MP3_BITRATE, OPUS_BITRATE
         
         # MP3 params
         mp3_params = get_format_export_params("mp3")
@@ -129,17 +129,17 @@ class TestAudioFormatConfiguration:
         """Test that invalid formats fall back to pcm"""
         # Need to reload the module to pick up new env vars
         import importlib
-        import voice_mode.config
-        importlib.reload(voice_mode.config)
+        import python_voicemode.config
+        importlib.reload(python_voicemode.config)
         
-        from voice_mode.config import AUDIO_FORMAT
+        from python_voicemode.config import AUDIO_FORMAT
         
         # Should fallback to pcm
         assert AUDIO_FORMAT == "pcm"
     
     def test_format_specific_bitrate_settings(self):
         """Test format-specific quality settings"""
-        from voice_mode.config import OPUS_BITRATE, MP3_BITRATE, AAC_BITRATE
+        from python_voicemode.config import OPUS_BITRATE, MP3_BITRATE, AAC_BITRATE
         
         # Default values
         assert OPUS_BITRATE == 32000  # 32kbps for voice
@@ -154,10 +154,10 @@ class TestAudioFormatConfiguration:
         """Test custom bitrate configuration"""
         # Need to reload the module to pick up new env vars
         import importlib
-        import voice_mode.config
-        importlib.reload(voice_mode.config)
+        import python_voicemode.config
+        importlib.reload(python_voicemode.config)
         
-        from voice_mode.config import OPUS_BITRATE, MP3_BITRATE
+        from python_voicemode.config import OPUS_BITRATE, MP3_BITRATE
         
         assert OPUS_BITRATE == 48000
         assert MP3_BITRATE == "128k"

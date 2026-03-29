@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from voice_mode.connect.messaging import (
+from python_voicemode.connect.messaging import (
     deliver_message,
     read_inbox,
     _write_persistent_inbox,

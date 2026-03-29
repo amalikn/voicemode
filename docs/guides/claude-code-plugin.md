@@ -11,6 +11,11 @@ The VoiceMode plugin includes:
 - **Skill File** - Documentation and usage patterns for Claude
 - **Hooks** - Sound feedback during tool execution
 
+For Claude users, the shortest built-in trigger remains the plugin slash command
+surface such as `/voicemode:converse`. The new `voicemode chat/read/mode/stop`
+shortcuts are core CLI shortcuts aimed at shared usage across Codex and Claude
+terminal workflows.
+
 ## Installation
 
 ### From the Plugin Marketplace
@@ -57,6 +62,14 @@ voicemode kokoro install
 | `/voicemode:start` | Start voice services |
 | `/voicemode:stop` | Stop voice services |
 
+Core CLI shortcuts available outside slash commands:
+
+- `voicemode chat`
+- `voicemode read <path>`
+- `voicemode mode walk`
+- `voicemode mode convo`
+- `voicemode stop`
+
 ### Starting a Conversation
 
 ```bash
@@ -80,6 +93,10 @@ Shows whether Whisper (STT) and Kokoro (TTS) services are running and healthy.
 Once installed, Claude has access to these MCP tools:
 
 - `mcp__voicemode__converse` - Speak and listen for responses
+- `mcp__voicemode__chat` - Short alias for `converse`
+- `mcp__voicemode__read` - Read a file aloud through the running runtime
+- `mcp__voicemode__mode` - Switch runtime mode with `walk` / `convo`
+- `mcp__voicemode__stop` - Stop current speech or read-aloud playback
 - `mcp__voicemode__service` - Manage voice services
 
 ### Converse Tool Parameters

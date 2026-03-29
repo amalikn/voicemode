@@ -16,6 +16,43 @@ VoiceMode enables natural voice conversations with Claude Code. Voice isn't abou
 - Holding a coffee (or a dog)
 - Any moment when your hands or eyes are busy
 
+## Implementation Status
+
+The repo now has two active VoiceMode surfaces:
+
+- the established MCP/server path centered on `voicemode chat` / `voicemode converse`
+- the newer local/hybrid runtime centered on `voicemode voice`
+
+Current rollout status:
+
+- Phase 1: complete
+  - explicit state machine
+  - cancel-and-replace turn ownership
+  - runtime launcher / diagnostics / control path
+  - push-to-talk surface
+  - mpv-backed cancellable playback
+- Phase 2: complete
+  - conversational Silero VAD path
+  - local Ollama voice-shell for acknowledgements / summaries / routing hints
+  - Codex escalation bridge
+  - Pipecat adapter surface and dependency path
+- Phase 3: complete
+  - read-aloud controls are covered end to end for continue / repeat / skip / summarize / stop
+  - resilience hardening includes explicit timeout / failure recovery back to a ready state
+  - diagnostics expose SQLite-backed runtime summaries in `status` and `diag`
+  - Hammerspoon menubar polish includes clearer state labels and runtime tooltips
+  - docs and realtime tests now cover the completed Phase 3 runtime surface
+
+Canonical runtime docs and audit artifacts:
+
+- [Usage Sheet](docs/guides/usage-sheet.md)
+- [Voice Runtime Guide](docs/guides/voice-runtime.md)
+- [Reports Index](docs/reports/index.md)
+- [Phase 1 Completion](docs/reports/voicemode-phase1-completion-report-20260323_1225.md)
+- [Phase 2 Completion](docs/reports/voicemode-phase2-completion-report-20260323_1308.md)
+- [Phase 3 Start](docs/reports/voicemode-phase3-start-report-20260323_1326.md)
+- [Phase 3 Completion](docs/reports/voicemode-phase3-completion-report-20260323_1332.md)
+
 ## See It In Action
 
 [![VoiceMode Demo](https://img.youtube.com/vi/cYdwOD_-dQc/maxresdefault.jpg)](https://www.youtube.com/watch?v=cYdwOD_-dQc)
@@ -64,6 +101,10 @@ export OPENAI_API_KEY=your-openai-key
 claude converse
 ```
 
+The installer now also checks the local runtime Ollama helper model and prompts
+you to pull the configured model when it is missing. By default, the runtime
+expects `phi4-mini` unless `VOICEMODE_OLLAMA_MODEL` is overridden.
+
 ### Option 3: Codex (Repo-pinned MCP, Recommended)
 
 Use this when you want VoiceMode tools directly in Codex without the Claude plugin.
@@ -78,6 +119,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # 3) Install VoiceMode + local voice service dependencies
 uvx voice-mode-install
 ```
+
+The installer checks the local runtime Ollama helper model as part of setup.
+If the configured model is missing, it prompts you to pull it. The default
+runtime helper model is `phi4-mini` unless overridden with
+`VOICEMODE_OLLAMA_MODEL`.
 
 Add this to `~/.codex/config.toml`:
 
@@ -163,6 +209,47 @@ ln -sfn /Volumes/Data/_ai/_mcp/mcp-data/voicemode "$HOME/.voicemode"
 4. Use the same MCP server command everywhere:
 - `bash -lc "mkdir -p /Volumes/Data/_ai/_mcp/mcp-data/voicemode && cd /Volumes/Data/_ai/_mcp/mcp_stuff/voicemode && exec uv run voicemode"`
 
+### Option 4: Local/Hybrid Voice Runtime
+
+Use this when you want a dedicated desktop voice stack with push-to-talk,
+conversational barge-in, and interruptible read-aloud:
+
+```bash
+voicemode voice run
+voicemode voice status
+voicemode voice diag
+voicemode voice export-hammerspoon
+```
+
+What this runtime now includes:
+
+- explicit state transitions and event logging
+- cancel-and-replace barge-in behavior
+- walkie-talkie and conversational modes
+- interruptible markdown/text read-aloud
+- SQLite-backed session and event history
+- local Ollama voice-shell smoothing and summaries
+- Codex escalation for deeper coding / repo turns
+- Silero-backed conversational VAD with fallbacks
+- Pipecat available as an optional adapter dependency
+
+The runtime is documented in [docs/guides/voice-runtime.md](docs/guides/voice-runtime.md), and the implementation trail is tracked in [docs/reports/index.md](docs/reports/index.md).
+
+For task-oriented examples such as one-shot conversations, continuous
+back-and-forth, file read-aloud, walkie-talkie mode, and barge-in behavior, see
+the [Usage Sheet](docs/guides/usage-sheet.md).
+
+Fastest shared CLI shortcuts for Codex / Claude terminal use:
+
+```bash
+voicemode chat
+voicemode chat --continuous
+voicemode read README.md
+voicemode mode walk
+voicemode mode convo
+voicemode stop
+```
+
 Claude Code config snippet:
 
 ```json
@@ -246,9 +333,10 @@ These values are tuned for longer user responses and fewer premature cutoffs.
 VoiceMode exposes the following MCP tool capabilities:
 
 - Conversation: `mcp__voicemode__converse`
+- Shortcut aliases: `mcp__voicemode__chat`, `mcp__voicemode__read`, `mcp__voicemode__mode`, `mcp__voicemode__stop`
 - Service management: `mcp__voicemode__service`
 - Connect presence/status: `mcp__voicemode__connect_status`
-- Diagnostics: `mcp__voicemode__voice_mode_info`, `mcp__voicemode__check_audio_dependencies`
+- Diagnostics: `mcp__voicemode__python_voicemode_info`, `mcp__voicemode__check_audio_dependencies`
 - Devices/voices: `mcp__voicemode__voice_status`, `mcp__voicemode__check_audio_devices`, `mcp__voicemode__list_tts_voices`
 - Provider registry: `mcp__voicemode__refresh_provider_registry`, `mcp__voicemode__get_provider_details`, `mcp__voicemode__voice_registry`
 - Statistics: `mcp__voicemode__voice_statistics`, `mcp__voicemode__voice_statistics_summary`, `mcp__voicemode__voice_statistics_recent`, `mcp__voicemode__voice_statistics_export`, `mcp__voicemode__voice_statistics_reset`

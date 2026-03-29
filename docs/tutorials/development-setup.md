@@ -48,11 +48,11 @@ uv tool install -e .
 uv build
 
 # This creates:
-# dist/voice_mode-X.Y.Z-py3-none-any.whl
-# dist/voice_mode-X.Y.Z.tar.gz
+# dist/python_voicemode-X.Y.Z-py3-none-any.whl
+# dist/python_voicemode-X.Y.Z.tar.gz
 
 # Test the built package
-uvx --from dist/voice_mode-*.whl voicemode
+uvx --from dist/python_voicemode-*.whl voicemode
 ```
 
 ### Running Tests
@@ -62,7 +62,7 @@ uvx --from dist/voice_mode-*.whl voicemode
 pytest
 
 # Run with coverage
-pytest --cov=voice_mode
+pytest --cov=python_voicemode
 
 # Run specific test file
 pytest tests/test_converse.py
@@ -89,7 +89,7 @@ voicemode kokoro start
 
 ```
 voicemode/
-├── voice_mode/           # Main package
+├── python_voicemode/           # Main package
 │   ├── __init__.py
 │   ├── server.py         # MCP server
 │   ├── cli.py           # CLI commands
@@ -111,14 +111,14 @@ voicemode/
 
 ### Adding a New Tool
 
-1. Create tool file in `voice_mode/tools/`
+1. Create tool file in `python_voicemode/tools/`
 2. Implement tool class with MCP decorators
 3. Add tests in `tests/tools/`
 4. Update documentation
 
 ### Modifying Configuration
 
-1. Update `voice_mode/config.py`
+1. Update `python_voicemode/config.py`
 2. Add environment variable to docs
 3. Update tests for new config
 4. Add to example `.env` files
@@ -199,13 +199,13 @@ We use Black for formatting and Ruff for linting:
 
 ```bash
 # Format code
-black voice_mode tests
+black python_voicemode tests
 
 # Run linter
-ruff check voice_mode tests
+ruff check python_voicemode tests
 
 # Fix linting issues
-ruff check --fix voice_mode tests
+ruff check --fix python_voicemode tests
 ```
 
 ### Pre-commit Hooks

@@ -2,7 +2,7 @@
 
 import pytest
 
-from voice_mode.dj.chapters import (
+from python_voicemode.dj.chapters import (
     Chapter,
     convert_cue_to_ffmetadata,
     get_chapter_count,

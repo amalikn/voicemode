@@ -7,7 +7,7 @@ import os
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from voice_mode.utils.ffmpeg_check import check_and_report_ffmpeg, ensure_ffmpeg_or_exit
+from python_voicemode.utils.ffmpeg_check import check_and_report_ffmpeg, ensure_ffmpeg_or_exit
 
 print("=== Testing FFmpeg Detection ===\n")
 

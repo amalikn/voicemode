@@ -4,8 +4,8 @@ import pytest
 import asyncio
 from unittest.mock import patch
 
-from voice_mode import config
-from voice_mode.provider_discovery import ProviderRegistry, is_local_provider, detect_provider_type
+from python_voicemode import config
+from python_voicemode.provider_discovery import ProviderRegistry, is_local_provider, detect_provider_type
 
 
 class TestProviderResilience:

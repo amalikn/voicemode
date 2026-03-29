@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from voice_mode.connect.types import ConnectState
-from voice_mode.connect.users import UserManager
-from voice_mode.connect.watcher import diff_user_state, watch_user_changes
+from python_voicemode.connect.types import ConnectState
+from python_voicemode.connect.users import UserManager
+from python_voicemode.connect.watcher import diff_user_state, watch_user_changes
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ class TestSnapshot:
         user_manager.subscribe("cora", "my-team")
 
         # Patch CLAUDE_TEAMS_DIR for the subscribe call
-        import voice_mode.connect.users as users_mod
+        import python_voicemode.connect.users as users_mod
         original_dir = users_mod.CLAUDE_TEAMS_DIR
         users_mod.CLAUDE_TEAMS_DIR = tmp_path / "teams"
         try:

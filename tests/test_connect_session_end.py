@@ -17,7 +17,7 @@ import pytest
 @pytest.fixture
 def hook_script():
     """Path to the connect-session-end.sh hook script."""
-    return Path(__file__).parent.parent / "voice_mode" / "data" / "hooks" / "connect-session-end.sh"
+    return Path(__file__).parent.parent / "python_voicemode" / "data" / "hooks" / "connect-session-end.sh"
 
 
 @pytest.fixture

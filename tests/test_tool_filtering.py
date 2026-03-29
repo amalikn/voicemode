@@ -8,7 +8,7 @@ from unittest.mock import patch, MagicMock
 import importlib
 
 # Import the module we're testing
-import voice_mode.tools
+import python_voicemode.tools
 
 
 class TestToolFiltering:
@@ -28,7 +28,7 @@ class TestToolFiltering:
 
     def test_get_all_available_tools(self):
         """Test that we can discover all available tools."""
-        from voice_mode.tools import get_all_available_tools
+        from python_voicemode.tools import get_all_available_tools
 
         tools = get_all_available_tools()
 
@@ -45,7 +45,7 @@ class TestToolFiltering:
 
     def test_parse_tool_list(self):
         """Test parsing of comma-separated tool lists."""
-        from voice_mode.tools import parse_tool_list
+        from python_voicemode.tools import parse_tool_list
 
         # Test empty string
         assert parse_tool_list("") == set()
@@ -64,7 +64,7 @@ class TestToolFiltering:
 
     def test_whitelist_mode(self):
         """Test VOICEMODE_TOOLS_ENABLED whitelist mode."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         os.environ['VOICEMODE_TOOLS_ENABLED'] = "converse,service"
 
@@ -77,7 +77,7 @@ class TestToolFiltering:
 
     def test_blacklist_mode(self):
         """Test VOICEMODE_TOOLS_DISABLED blacklist mode."""
-        from voice_mode.tools import determine_tools_to_load, get_all_available_tools
+        from python_voicemode.tools import determine_tools_to_load, get_all_available_tools
 
         os.environ['VOICEMODE_TOOLS_DISABLED'] = "kokoro_install,whisper_install"
 
@@ -92,7 +92,7 @@ class TestToolFiltering:
 
     def test_whitelist_takes_precedence(self):
         """Test that whitelist takes precedence when both are set."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         os.environ['VOICEMODE_TOOLS_ENABLED'] = "converse"
         os.environ['VOICEMODE_TOOLS_DISABLED'] = "service"
@@ -105,11 +105,11 @@ class TestToolFiltering:
 
     def test_legacy_mode_with_deprecation(self):
         """Test legacy VOICEMODE_TOOLS with deprecation warning."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         os.environ['VOICEMODE_TOOLS'] = "converse,service"
 
-        with patch('voice_mode.tools.logger') as mock_logger:
+        with patch('python_voicemode.tools.logger') as mock_logger:
             tools, mode = determine_tools_to_load()
 
             # Check deprecation warning was logged
@@ -124,7 +124,7 @@ class TestToolFiltering:
 
     def test_default_mode_loads_essential(self):
         """Test that default mode loads only essential tools (converse, service, connect_status)."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         # No environment variables set
         tools, mode = determine_tools_to_load()
@@ -135,11 +135,11 @@ class TestToolFiltering:
 
     def test_invalid_tool_names_warning(self):
         """Test that invalid tool names generate warnings."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         os.environ['VOICEMODE_TOOLS_ENABLED'] = "converse,nonexistent_tool"
 
-        with patch('voice_mode.tools.logger') as mock_logger:
+        with patch('python_voicemode.tools.logger') as mock_logger:
             tools, mode = determine_tools_to_load()
 
             # Check warning was logged for invalid tool
@@ -151,23 +151,23 @@ class TestToolFiltering:
 
     def test_load_tool_function(self):
         """Test the load_tool function."""
-        from voice_mode.tools import load_tool
+        from python_voicemode.tools import load_tool
 
-        with patch('voice_mode.tools.importlib.import_module') as mock_import:
+        with patch('python_voicemode.tools.importlib.import_module') as mock_import:
             # Test regular tool
             result = load_tool("converse")
             assert result is True
-            mock_import.assert_called_with(".converse", package="voice_mode.tools")
+            mock_import.assert_called_with(".converse", package="python_voicemode.tools")
 
             # Test subdirectory tool (formerly service tool)
             mock_import.reset_mock()
             result = load_tool("kokoro_install")
             assert result is True
-            mock_import.assert_called_with(".kokoro.install", package="voice_mode.tools")
+            mock_import.assert_called_with(".kokoro.install", package="python_voicemode.tools")
 
     def test_empty_tools_enabled(self):
         """Test that empty VOICEMODE_TOOLS_ENABLED loads nothing."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         os.environ['VOICEMODE_TOOLS_ENABLED'] = ""
 
@@ -179,7 +179,7 @@ class TestToolFiltering:
 
     def test_whitespace_only_tools_enabled(self):
         """Test that whitespace-only VOICEMODE_TOOLS_ENABLED loads nothing."""
-        from voice_mode.tools import determine_tools_to_load
+        from python_voicemode.tools import determine_tools_to_load
 
         os.environ['VOICEMODE_TOOLS_ENABLED'] = "   "
 
@@ -197,7 +197,7 @@ class TestCLIArguments:
         """Test --tools-enabled CLI argument."""
         # This test would need to run the CLI in a subprocess
         result = subprocess.run(
-            [sys.executable, "-m", "voice_mode", "--tools-enabled", "converse", "--help"],
+            [sys.executable, "-m", "python_voicemode", "--tools-enabled", "converse", "--help"],
             capture_output=True,
             text=True,
             env={**os.environ, 'PYTHONPATH': str(Path(__file__).parent.parent)}
@@ -209,7 +209,7 @@ class TestCLIArguments:
     def test_cli_tools_disabled(self):
         """Test --tools-disabled CLI argument."""
         result = subprocess.run(
-            [sys.executable, "-m", "voice_mode", "--tools-disabled", "kokoro_install", "--help"],
+            [sys.executable, "-m", "python_voicemode", "--tools-disabled", "kokoro_install", "--help"],
             capture_output=True,
             text=True,
             env={**os.environ, 'PYTHONPATH': str(Path(__file__).parent.parent)}
@@ -224,12 +224,12 @@ class TestIntegration:
 
     def test_subprocess_with_enabled_tools(self):
         """Test that tools are actually filtered when running as subprocess."""
-        # Create a test script that imports voice_mode.tools and checks loaded tools
+        # Create a test script that imports python_voicemode.tools and checks loaded tools
         test_script = '''
 import os
 os.environ['VOICEMODE_TOOLS_ENABLED'] = 'converse'
-import voice_mode.tools
-from voice_mode.tools import tools_to_load
+import python_voicemode.tools
+from python_voicemode.tools import tools_to_load
 print(','.join(sorted(tools_to_load)))
 '''
 
@@ -249,11 +249,11 @@ print(','.join(sorted(tools_to_load)))
         test_script = '''
 import os
 os.environ['VOICEMODE_TOOLS_DISABLED'] = 'kokoro_install,whisper_install'
-import voice_mode.tools
-from voice_mode.tools import tools_to_load
+import python_voicemode.tools
+from python_voicemode.tools import tools_to_load
 # Check that disabled tools are not in the loaded set
 disabled = {'kokoro_install', 'whisper_install'}
-loaded = voice_mode.tools.tools_to_load
+loaded = python_voicemode.tools.tools_to_load
 assert not (disabled & loaded), f"Disabled tools found: {disabled & loaded}"
 print("SUCCESS")
 '''

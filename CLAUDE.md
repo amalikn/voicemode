@@ -10,6 +10,11 @@ Load the voicemode skill for voice conversation support: `/voicemode:voicemode`
 
 VoiceMode is a Python package that provides voice interaction capabilities for AI assistants through the Model Context Protocol (MCP). It enables natural voice conversations with Claude Code and other AI coding assistants by integrating speech-to-text (STT) and text-to-speech (TTS) services.
 
+Current rollout tracking for the local/hybrid runtime lives in:
+
+- `docs/guides/voice-runtime.md`
+- `docs/reports/index.md`
+
 ## Key Commands
 
 ### Development & Testing
@@ -22,7 +27,7 @@ make test
 # Or directly: uv run pytest tests/ -v --tb=short
 
 # Run specific test
-uv run pytest tests/test_voice_mode.py -v
+uv run pytest tests/test_python_voicemode.py -v
 
 # Clean build artifacts
 make clean
@@ -59,12 +64,12 @@ make docs-check
 
 ### Core Components
 
-1. **MCP Server (`voice_mode/server.py`)**
+1. **MCP Server (`python_voicemode/server.py`)**
    - FastMCP-based server providing voice tools via stdio transport
    - Auto-imports all tools, prompts, and resources
    - Handles FFmpeg availability checks and logging setup
 
-2. **Tool System (`voice_mode/tools/`)**
+2. **Tool System (`python_voicemode/tools/`)**
    - **converse.py**: Primary voice conversation tool with TTS/STT integration
    - **service.py**: Unified service management for Whisper/Kokoro
    - **providers.py**: Provider discovery and registry management
@@ -72,17 +77,17 @@ make docs-check
    - Services subdirectory contains install/uninstall tools for Whisper and Kokoro
    - See [Tool Loading Architecture](docs/reference/tool-loading-architecture.md) for internal details
 
-3. **Provider System (`voice_mode/providers.py`)**
+3. **Provider System (`python_voicemode/providers.py`)**
    - Dynamic discovery of OpenAI-compatible TTS/STT endpoints
    - Health checking and failover support
    - Maintains registry of available voice services
 
-4. **Configuration (`voice_mode/config.py`)**
+4. **Configuration (`python_voicemode/config.py`)**
    - Environment-based configuration with sensible defaults
    - Support for voice preference files (project/user level)
    - Audio format configuration (PCM, MP3, WAV, FLAC, AAC, Opus)
 
-5. **Resources (`voice_mode/resources/`)**
+5. **Resources (`python_voicemode/resources/`)**
    - MCP resources exposed for client access
    - Statistics, configuration, changelog, and version information
    - Whisper model management
@@ -147,4 +152,6 @@ Quick reference:
 - **[skills/voicemode-connect/SKILL.md](skills/voicemode-connect/SKILL.md)** - Remote voice via mobile/web clients
 - **[docs/tutorials/getting-started.md](docs/tutorials/getting-started.md)** - Installation guide
 - **[docs/guides/configuration.md](docs/guides/configuration.md)** - Configuration reference
+- **[docs/guides/voice-runtime.md](docs/guides/voice-runtime.md)** - Local/hybrid runtime behavior and config
+- **[docs/reports/index.md](docs/reports/index.md)** - Phase reports and implementation outcomes
 - **[docs/concepts/architecture.md](docs/concepts/architecture.md)** - Detailed architecture

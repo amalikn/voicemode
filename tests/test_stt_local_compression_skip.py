@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 
-from voice_mode.tools.converse import speech_to_text
-from voice_mode import config
+from python_voicemode.tools.converse import speech_to_text
+from python_voicemode import config
 
 
 @pytest.mark.asyncio
@@ -42,10 +42,10 @@ async def test_stt_skips_compression_for_local_endpoint():
         return buffer.getvalue()
 
     # Mock local endpoint as primary with auto mode (default)
-    with patch('voice_mode.config.STT_BASE_URLS', ['http://127.0.0.1:2022/v1']), \
-         patch('voice_mode.config.STT_COMPRESS', 'auto'), \
-         patch('voice_mode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
-         patch('voice_mode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
+    with patch('python_voicemode.config.STT_BASE_URLS', ['http://127.0.0.1:2022/v1']), \
+         patch('python_voicemode.config.STT_COMPRESS', 'auto'), \
+         patch('python_voicemode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
+         patch('python_voicemode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
 
         mock_stt.return_value = {"text": "Test", "provider": "whisper", "endpoint": "http://127.0.0.1:2022/v1"}
 
@@ -88,11 +88,11 @@ async def test_stt_compresses_for_remote_endpoint():
         return buffer.getvalue()
 
     # Mock remote endpoint as primary with auto mode
-    with patch('voice_mode.config.STT_BASE_URLS', ['https://api.openai.com/v1']), \
-         patch('voice_mode.config.STT_COMPRESS', 'auto'), \
-         patch('voice_mode.tools.converse.STT_AUDIO_FORMAT', 'mp3'), \
-         patch('voice_mode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
-         patch('voice_mode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
+    with patch('python_voicemode.config.STT_BASE_URLS', ['https://api.openai.com/v1']), \
+         patch('python_voicemode.config.STT_COMPRESS', 'auto'), \
+         patch('python_voicemode.tools.converse.STT_AUDIO_FORMAT', 'mp3'), \
+         patch('python_voicemode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
+         patch('python_voicemode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
 
         mock_stt.return_value = {"text": "Test", "provider": "openai", "endpoint": "https://api.openai.com/v1"}
 
@@ -135,11 +135,11 @@ async def test_stt_always_mode_compresses_local():
         return buffer.getvalue()
 
     # Mock local endpoint BUT with always mode
-    with patch('voice_mode.config.STT_BASE_URLS', ['http://127.0.0.1:2022/v1']), \
-         patch('voice_mode.config.STT_COMPRESS', 'always'), \
-         patch('voice_mode.tools.converse.STT_AUDIO_FORMAT', 'mp3'), \
-         patch('voice_mode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
-         patch('voice_mode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
+    with patch('python_voicemode.config.STT_BASE_URLS', ['http://127.0.0.1:2022/v1']), \
+         patch('python_voicemode.config.STT_COMPRESS', 'always'), \
+         patch('python_voicemode.tools.converse.STT_AUDIO_FORMAT', 'mp3'), \
+         patch('python_voicemode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
+         patch('python_voicemode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
 
         mock_stt.return_value = {"text": "Test", "provider": "whisper", "endpoint": "http://127.0.0.1:2022/v1"}
 
@@ -182,10 +182,10 @@ async def test_stt_never_mode_skips_compression_for_remote():
         return buffer.getvalue()
 
     # Mock remote endpoint BUT with never mode
-    with patch('voice_mode.config.STT_BASE_URLS', ['https://api.openai.com/v1']), \
-         patch('voice_mode.config.STT_COMPRESS', 'never'), \
-         patch('voice_mode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
-         patch('voice_mode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
+    with patch('python_voicemode.config.STT_BASE_URLS', ['https://api.openai.com/v1']), \
+         patch('python_voicemode.config.STT_COMPRESS', 'never'), \
+         patch('python_voicemode.tools.converse.prepare_audio_for_stt', side_effect=capture_format), \
+         patch('python_voicemode.simple_failover.simple_stt_failover', new_callable=AsyncMock) as mock_stt:
 
         mock_stt.return_value = {"text": "Test", "provider": "openai", "endpoint": "https://api.openai.com/v1"}
 
@@ -203,7 +203,7 @@ async def test_stt_never_mode_skips_compression_for_remote():
 @pytest.mark.asyncio
 async def test_is_local_provider_detection():
     """Test that is_local_provider correctly identifies local endpoints."""
-    from voice_mode.provider_discovery import is_local_provider
+    from python_voicemode.provider_discovery import is_local_provider
 
     # Local endpoints
     assert is_local_provider("http://127.0.0.1:2022/v1") == True

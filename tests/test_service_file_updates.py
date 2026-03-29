@@ -7,10 +7,10 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 import pytest
 
-from voice_mode.tools.service import (
+from python_voicemode.tools.service import (
     get_service_config_vars,
 )
-from voice_mode.utils.gpu_detection import has_gpu_support
+from python_voicemode.utils.gpu_detection import has_gpu_support
 
 
 def test_get_service_config_vars():
@@ -40,7 +40,7 @@ def test_get_service_config_vars_handles_missing_start_script():
     
     with tempfile.TemporaryDirectory() as tmpdir:
         # Mock find_kokoro_fastapi to return our temp directory
-        with patch('voice_mode.tools.service.find_kokoro_fastapi') as mock_find:
+        with patch('python_voicemode.tools.service.find_kokoro_fastapi') as mock_find:
             mock_find.return_value = tmpdir
             
             # On Linux, create only start-gpu.sh (not start.sh)
@@ -74,7 +74,7 @@ def test_get_service_config_vars_returns_empty_when_no_script_found():
     
     with tempfile.TemporaryDirectory() as tmpdir:
         # Mock find_kokoro_fastapi to return our temp directory
-        with patch('voice_mode.tools.service.find_kokoro_fastapi') as mock_find:
+        with patch('python_voicemode.tools.service.find_kokoro_fastapi') as mock_find:
             mock_find.return_value = tmpdir
             
             # Don't create any start scripts
@@ -97,8 +97,8 @@ def test_get_service_config_vars_selects_gpu_script_when_gpu_available():
     
     with tempfile.TemporaryDirectory() as tmpdir:
         # Mock find_kokoro_fastapi to return our temp directory
-        with patch('voice_mode.tools.service.find_kokoro_fastapi') as mock_find:
-            with patch('voice_mode.tools.service.has_gpu_support') as mock_gpu:
+        with patch('python_voicemode.tools.service.find_kokoro_fastapi') as mock_find:
+            with patch('python_voicemode.tools.service.has_gpu_support') as mock_gpu:
                 mock_find.return_value = tmpdir
                 mock_gpu.return_value = True  # GPU is available
                 
@@ -129,8 +129,8 @@ def test_get_service_config_vars_selects_cpu_script_when_no_gpu():
     
     with tempfile.TemporaryDirectory() as tmpdir:
         # Mock find_kokoro_fastapi to return our temp directory
-        with patch('voice_mode.tools.service.find_kokoro_fastapi') as mock_find:
-            with patch('voice_mode.tools.service.has_gpu_support') as mock_gpu:
+        with patch('python_voicemode.tools.service.find_kokoro_fastapi') as mock_find:
+            with patch('python_voicemode.tools.service.has_gpu_support') as mock_gpu:
                 mock_find.return_value = tmpdir
                 mock_gpu.return_value = False  # No GPU available
                 

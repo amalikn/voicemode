@@ -1,10 +1,10 @@
-"""Tests for voice_mode.connect.config."""
+"""Tests for python_voicemode.connect.config."""
 
 import importlib
 import pytest
 
-import voice_mode.config as cfg
-from voice_mode.connect.config import (
+import python_voicemode.config as cfg
+from python_voicemode.connect.config import (
     ConnectDisabledError,
     get_agent_name,
     get_host,

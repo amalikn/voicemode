@@ -6,7 +6,7 @@ from openai import NotFoundError, AuthenticationError, APIConnectionError, OpenA
 from httpx import Response, Request
 import tempfile
 
-from voice_mode.simple_failover import simple_stt_failover
+from python_voicemode.simple_failover import simple_stt_failover
 
 # Test config: use exactly 2 endpoints (local Whisper + OpenAI)
 TEST_STT_BASE_URLS = ["http://127.0.0.1:2022/v1", "https://api.openai.com/v1"]
@@ -21,8 +21,8 @@ class TestSTTErrorHandling:
         # Mock file object
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.STT_BASE_URLS', TEST_STT_BASE_URLS):
-            with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.STT_BASE_URLS', TEST_STT_BASE_URLS):
+            with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
                 # Mock connection refused for both Whisper and OpenAI
                 mock_client = MockClient.return_value
                 mock_client.audio.transcriptions.create = AsyncMock(
@@ -50,8 +50,8 @@ class TestSTTErrorHandling:
         """Test when OpenAI fails with authentication error"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.STT_BASE_URLS', TEST_STT_BASE_URLS):
-            with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.STT_BASE_URLS', TEST_STT_BASE_URLS):
+            with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
                 mock_client = MockClient.return_value
 
                 # First call (Whisper) - connection refused
@@ -82,7 +82,7 @@ class TestSTTErrorHandling:
         """Test when OPENAI_API_KEY is not set"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
             # Simulate the OpenAI client initialization error when no API key
             def raise_no_api_key(*args, **kwargs):
                 if kwargs.get('api_key') == 'dummy-key-for-local':
@@ -97,7 +97,7 @@ class TestSTTErrorHandling:
                 side_effect=APIConnectionError(message="Connection error.", request=MagicMock())
             )
 
-            with patch('voice_mode.simple_failover.OPENAI_API_KEY', None):
+            with patch('python_voicemode.simple_failover.OPENAI_API_KEY', None):
                 result = await simple_stt_failover(mock_file)
 
             assert result["error_type"] == "connection_failed"
@@ -107,7 +107,7 @@ class TestSTTErrorHandling:
         """Test when Whisper is on wrong endpoint path"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
             mock_client = MockClient.return_value
 
             # Simulate 404 error from wrong path
@@ -136,7 +136,7 @@ class TestSTTErrorHandling:
         """Test when STT connects successfully but detects no speech"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
             mock_client = MockClient.return_value
 
             # Return empty string (no speech detected)
@@ -155,7 +155,7 @@ class TestSTTErrorHandling:
         """Test when Whisper returns error as JSON in text field"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
             mock_client = MockClient.return_value
 
             # Whisper returns error as JSON string in successful response
@@ -175,7 +175,7 @@ class TestSTTErrorHandling:
         """Test successful transcription"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
             mock_client = MockClient.return_value
 
             # Successful transcription
@@ -195,8 +195,8 @@ class TestSTTErrorHandling:
         """Test fallback from Whisper to OpenAI"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.STT_BASE_URLS', TEST_STT_BASE_URLS):
-            with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.STT_BASE_URLS', TEST_STT_BASE_URLS):
+            with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
                 # Need to handle different clients for Whisper and OpenAI
                 whisper_client = MagicMock()
                 openai_client = MagicMock()
@@ -234,7 +234,7 @@ class TestSTTErrorHandling:
         """Test that successful empty result is preferred over connection errors"""
         mock_file = MagicMock()
 
-        with patch('voice_mode.simple_failover.AsyncOpenAI') as MockClient:
+        with patch('python_voicemode.simple_failover.AsyncOpenAI') as MockClient:
             whisper_client = MagicMock()
             openai_client = MagicMock()
 

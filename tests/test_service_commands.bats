@@ -7,7 +7,7 @@ setup() {
     # Set up test environment
     export PYTHONPATH="${BATS_TEST_DIRNAME}/..:${PYTHONPATH}"
     # Use python -m to run as module
-    VOICE_MODE="python -m voice_mode"
+    VOICE_MODE="python -m python_voicemode"
 }
 
 @test "whisper status command runs without error" {

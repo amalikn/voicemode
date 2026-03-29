@@ -1,5 +1,5 @@
 """
-Unit tests for voice_mode.auth module.
+Unit tests for python_voicemode.auth module.
 
 Tests PKCE generation, token storage, port selection, and OAuth flow components.
 """
@@ -14,7 +14,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from voice_mode.auth import (
+from python_voicemode.auth import (
     AUTH0_DOMAIN,
     AUTH0_CLIENT_ID,
     CALLBACK_PORT_START,
@@ -219,9 +219,9 @@ class TestTokenStorage:
 
         # Force plaintext store and redirect paths
         monkeypatch.setenv("VOICEMODE_CREDENTIAL_STORE", "plaintext")
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_DIR", creds_dir)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_FILE", creds_file)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_DIR", creds_dir)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_FILE", creds_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
 
         return creds_dir, creds_file
 
@@ -483,7 +483,7 @@ class TestTokenExchange:
             "token_type": "Bearer",
         }
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.post.return_value = mock_response
 
             result = exchange_code_for_tokens(
@@ -504,7 +504,7 @@ class TestTokenExchange:
             "error_description": "Invalid authorization code",
         }
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.post.return_value = mock_response
 
             with pytest.raises(AuthError) as exc_info:
@@ -530,7 +530,7 @@ class TestTokenRefresh:
             "token_type": "Bearer",
         }
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.post.return_value = mock_response
 
             result = refresh_access_token("old_refresh_token")
@@ -546,7 +546,7 @@ class TestTokenRefresh:
             "error_description": "Refresh token expired",
         }
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.post.return_value = mock_response
 
             with pytest.raises(AuthError) as exc_info:
@@ -568,7 +568,7 @@ class TestGetUserInfo:
             "name": "Test User",
         }
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.get.return_value = mock_response
 
             result = get_user_info("valid_token")
@@ -581,7 +581,7 @@ class TestGetUserInfo:
         mock_response = MagicMock()
         mock_response.status_code = 401
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.get.return_value = mock_response
 
             with pytest.raises(AuthError) as exc_info:
@@ -601,9 +601,9 @@ class TestGetValidCredentials:
         migrated_file = creds_dir / "credentials.migrated"
 
         monkeypatch.setenv("VOICEMODE_CREDENTIAL_STORE", "plaintext")
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_DIR", creds_dir)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_FILE", creds_file)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_DIR", creds_dir)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_FILE", creds_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
 
         return creds_dir, creds_file
 
@@ -645,7 +645,7 @@ class TestGetValidCredentials:
             "token_type": "Bearer",
         }
 
-        with patch("voice_mode.auth.httpx.Client") as mock_client:
+        with patch("python_voicemode.auth.httpx.Client") as mock_client:
             mock_client.return_value.__enter__.return_value.post.return_value = mock_response
 
             result = get_valid_credentials(auto_refresh=True)
@@ -698,7 +698,7 @@ class TestLoginCLI:
     def test_login_command_exists(self):
         """Test that login command is registered under connect group."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["auth", "login", "--help"])
@@ -710,7 +710,7 @@ class TestLoginCLI:
     def test_login_success(self):
         """Test successful login flow."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         mock_credentials = Credentials(
             access_token="test_access_token",
@@ -722,7 +722,7 @@ class TestLoginCLI:
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.login", return_value=mock_credentials) as mock_login:
+        with patch("python_voicemode.auth.login", return_value=mock_credentials) as mock_login:
             result = runner.invoke(connect, ["auth", "login", "--no-browser"])
 
             # Should have called auth.login
@@ -739,11 +739,11 @@ class TestLoginCLI:
     def test_login_cancelled(self):
         """Test login cancelled by user (Ctrl+C)."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.login", side_effect=KeyboardInterrupt()):
+        with patch("python_voicemode.auth.login", side_effect=KeyboardInterrupt()):
             result = runner.invoke(connect, ["auth", "login", "--no-browser"])
 
             assert result.exit_code == 1
@@ -752,11 +752,11 @@ class TestLoginCLI:
     def test_login_timeout(self):
         """Test login timeout."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.login", side_effect=AuthError("Authentication timed out. Please try again.")):
+        with patch("python_voicemode.auth.login", side_effect=AuthError("Authentication timed out. Please try again.")):
             result = runner.invoke(connect, ["auth", "login", "--no-browser"])
 
             assert result.exit_code == 1
@@ -765,11 +765,11 @@ class TestLoginCLI:
     def test_login_auth_error(self):
         """Test login with auth error."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.login", side_effect=AuthError("No available ports")):
+        with patch("python_voicemode.auth.login", side_effect=AuthError("No available ports")):
             result = runner.invoke(connect, ["auth", "login", "--no-browser"])
 
             assert result.exit_code == 1
@@ -779,7 +779,7 @@ class TestLoginCLI:
     def test_login_no_browser_shows_url(self):
         """Test --no-browser option shows URL in output."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         mock_credentials = Credentials(
             access_token="test_access_token",
@@ -799,7 +799,7 @@ class TestLoginCLI:
                 on_waiting()
             return mock_credentials
 
-        with patch("voice_mode.auth.login", side_effect=mock_login):
+        with patch("python_voicemode.auth.login", side_effect=mock_login):
             result = runner.invoke(connect, ["auth", "login", "--no-browser"])
 
             assert result.exit_code == 0
@@ -814,7 +814,7 @@ class TestLogoutCLI:
     def test_logout_command_exists(self):
         """Test that logout command is registered under connect group."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["auth", "logout", "--help"])
@@ -825,7 +825,7 @@ class TestLogoutCLI:
     def test_logout_with_credentials(self):
         """Test logout when credentials exist."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         mock_credentials = Credentials(
             access_token="test_access_token",
@@ -837,8 +837,8 @@ class TestLogoutCLI:
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.load_credentials", return_value=mock_credentials), \
-             patch("voice_mode.auth.clear_credentials", return_value=True):
+        with patch("python_voicemode.auth.load_credentials", return_value=mock_credentials), \
+             patch("python_voicemode.auth.clear_credentials", return_value=True):
             result = runner.invoke(connect, ["auth", "logout"])
 
             assert result.exit_code == 0
@@ -848,12 +848,12 @@ class TestLogoutCLI:
     def test_logout_no_credentials(self):
         """Test logout when no credentials stored."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.load_credentials", return_value=None), \
-             patch("voice_mode.auth.clear_credentials", return_value=False):
+        with patch("python_voicemode.auth.load_credentials", return_value=None), \
+             patch("python_voicemode.auth.clear_credentials", return_value=False):
             result = runner.invoke(connect, ["auth", "logout"])
 
             assert result.exit_code == 0
@@ -862,7 +862,7 @@ class TestLogoutCLI:
     def test_logout_credentials_without_email(self):
         """Test logout with credentials that have no email in user_info."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         mock_credentials = Credentials(
             access_token="test_access_token",
@@ -874,8 +874,8 @@ class TestLogoutCLI:
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.load_credentials", return_value=mock_credentials), \
-             patch("voice_mode.auth.clear_credentials", return_value=True):
+        with patch("python_voicemode.auth.load_credentials", return_value=mock_credentials), \
+             patch("python_voicemode.auth.clear_credentials", return_value=True):
             result = runner.invoke(connect, ["auth", "logout"])
 
             assert result.exit_code == 0
@@ -890,7 +890,7 @@ class TestAuthStatusCLI:
     def test_auth_status_command_exists(self):
         """Test that auth status command is registered."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["auth", "status", "--help"])
@@ -901,11 +901,11 @@ class TestAuthStatusCLI:
     def test_auth_status_not_logged_in(self):
         """Test auth status when not logged in."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.get_valid_credentials", return_value=None):
+        with patch("python_voicemode.auth.get_valid_credentials", return_value=None):
             result = runner.invoke(connect, ["auth", "status"])
 
             assert result.exit_code == 0
@@ -915,7 +915,7 @@ class TestAuthStatusCLI:
     def test_auth_status_logged_in(self):
         """Test auth status when logged in with user info."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         mock_credentials = Credentials(
             access_token="test_access_token",
@@ -927,7 +927,7 @@ class TestAuthStatusCLI:
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.get_valid_credentials", return_value=mock_credentials):
+        with patch("python_voicemode.auth.get_valid_credentials", return_value=mock_credentials):
             result = runner.invoke(connect, ["auth", "status"])
 
             assert result.exit_code == 0
@@ -938,7 +938,7 @@ class TestAuthStatusCLI:
     def test_auth_status_expired_token(self):
         """Test auth status when token is expired."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         mock_credentials = Credentials(
             access_token="test_access_token",
@@ -950,7 +950,7 @@ class TestAuthStatusCLI:
 
         runner = CliRunner()
 
-        with patch("voice_mode.auth.get_valid_credentials", return_value=mock_credentials):
+        with patch("python_voicemode.auth.get_valid_credentials", return_value=mock_credentials):
             result = runner.invoke(connect, ["auth", "status"])
 
             assert result.exit_code == 0
@@ -964,7 +964,7 @@ class TestStandbyAndUpRemoved:
     def test_standby_command_not_registered(self):
         """standby command should not exist under connect group."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["standby", "--help"])
@@ -973,7 +973,7 @@ class TestStandbyAndUpRemoved:
     def test_up_command_not_registered(self):
         """up command was removed — agents handle their own presence."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["up", "--help"])
@@ -982,7 +982,7 @@ class TestStandbyAndUpRemoved:
     def test_down_command_not_registered(self):
         """down command was removed along with up."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["down", "--help"])

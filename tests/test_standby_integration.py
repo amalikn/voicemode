@@ -11,7 +11,7 @@ class TestStandbyRemoved:
     def test_standby_command_not_registered(self):
         """standby command should not exist under connect group."""
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["standby", "--help"])
@@ -25,7 +25,7 @@ class TestConnectUpDownRemoved:
 
     def test_up_command_not_registered(self):
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["up", "--help"])
@@ -33,7 +33,7 @@ class TestConnectUpDownRemoved:
 
     def test_down_command_not_registered(self):
         from click.testing import CliRunner
-        from voice_mode.cli import connect
+        from python_voicemode.cli import connect
 
         runner = CliRunner()
         result = runner.invoke(connect, ["down", "--help"])

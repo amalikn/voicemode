@@ -19,10 +19,10 @@ class TestServeTransportOption:
 
     def test_serve_help_shows_transport_option(self):
         """Test that serve --help shows the transport option."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
-        result = runner.invoke(voice_mode_main_cli, ['serve', '--help'])
+        result = runner.invoke(python_voicemode_main_cli, ['serve', '--help'])
 
         assert result.exit_code == 0
         assert '--transport' in result.output or '-t' in result.output
@@ -41,10 +41,10 @@ class TestServeTransportOption:
 
             # Need to reimport to get fresh config values
             import importlib
-            import voice_mode.config
-            importlib.reload(voice_mode.config)
+            import python_voicemode.config
+            importlib.reload(python_voicemode.config)
 
-            assert voice_mode.config.SERVE_TRANSPORT == "streamable-http"
+            assert python_voicemode.config.SERVE_TRANSPORT == "streamable-http"
         finally:
             # Restore env var
             if env_backup is not None:
@@ -56,10 +56,10 @@ class TestServeTransportOption:
         try:
             os.environ["VOICEMODE_SERVE_TRANSPORT"] = "sse"
             import importlib
-            import voice_mode.config
-            importlib.reload(voice_mode.config)
+            import python_voicemode.config
+            importlib.reload(python_voicemode.config)
 
-            assert voice_mode.config.SERVE_TRANSPORT == "sse"
+            assert python_voicemode.config.SERVE_TRANSPORT == "sse"
         finally:
             # Restore env var
             if env_backup is not None:
@@ -68,12 +68,12 @@ class TestServeTransportOption:
                 del os.environ["VOICEMODE_SERVE_TRANSPORT"]
             # Reload to reset
             import importlib
-            import voice_mode.config
-            importlib.reload(voice_mode.config)
+            import python_voicemode.config
+            importlib.reload(python_voicemode.config)
 
     def test_transport_option_streamable_http(self):
         """Test that --transport streamable-http uses /mcp path."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -82,11 +82,11 @@ class TestServeTransportOption:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        # Patch at the import location in voice_mode.cli
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        # Patch at the import location in python_voicemode.cli
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'streamable-http']
                 )
 
@@ -97,7 +97,7 @@ class TestServeTransportOption:
 
     def test_transport_option_sse(self):
         """Test that --transport sse uses /sse path."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -105,10 +105,10 @@ class TestServeTransportOption:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'sse']
                 )
 
@@ -117,7 +117,7 @@ class TestServeTransportOption:
 
     def test_sse_transport_shows_deprecation_warning(self):
         """Test that using SSE transport shows deprecation warning."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -125,10 +125,10 @@ class TestServeTransportOption:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'sse']
                 )
 
@@ -138,7 +138,7 @@ class TestServeTransportOption:
 
     def test_streamable_http_no_deprecation_warning(self):
         """Test that using streamable-http does NOT show deprecation warning."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -146,10 +146,10 @@ class TestServeTransportOption:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'streamable-http']
                 )
 
@@ -159,7 +159,7 @@ class TestServeTransportOption:
 
     def test_cli_transport_overrides_env_var(self):
         """Test that CLI --transport option overrides env var."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -172,10 +172,10 @@ class TestServeTransportOption:
             mock_app = MagicMock()
             mock_mcp.http_app.return_value = mock_app
 
-            with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+            with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
                 with patch('uvicorn.run') as mock_uvicorn:
                     result = runner.invoke(
-                        voice_mode_main_cli,
+                        python_voicemode_main_cli,
                         ['serve', '--transport', 'sse']
                     )
 
@@ -189,7 +189,7 @@ class TestServeTransportOption:
 
     def test_short_option_t_works(self):
         """Test that -t short option works for transport."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -197,10 +197,10 @@ class TestServeTransportOption:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '-t', 'sse']
                 )
 
@@ -209,12 +209,12 @@ class TestServeTransportOption:
 
     def test_invalid_transport_rejected(self):
         """Test that invalid transport value is rejected."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
         result = runner.invoke(
-            voice_mode_main_cli,
+            python_voicemode_main_cli,
             ['serve', '--transport', 'invalid-transport']
         )
 
@@ -224,7 +224,7 @@ class TestServeTransportOption:
 
     def test_transport_affects_displayed_endpoint(self):
         """Test that transport selection affects displayed endpoint path."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -232,20 +232,20 @@ class TestServeTransportOption:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 # Test streamable-http shows /mcp
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'streamable-http']
                 )
                 assert '/mcp' in result.output
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 # Test sse shows /sse
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'sse']
                 )
                 assert '/sse' in result.output
@@ -256,7 +256,7 @@ class TestServeTransportWithSecret:
 
     def test_streamable_http_with_secret(self):
         """Test that streamable-http with secret uses /mcp/secret path."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -264,10 +264,10 @@ class TestServeTransportWithSecret:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'streamable-http', '--secret', 'mysecret']
                 )
 
@@ -276,7 +276,7 @@ class TestServeTransportWithSecret:
 
     def test_sse_with_secret(self):
         """Test that sse with secret uses /sse/secret path."""
-        from voice_mode.cli import voice_mode_main_cli
+        from python_voicemode.cli import python_voicemode_main_cli
 
         runner = CliRunner()
 
@@ -284,10 +284,10 @@ class TestServeTransportWithSecret:
         mock_app = MagicMock()
         mock_mcp.http_app.return_value = mock_app
 
-        with patch.dict('sys.modules', {'voice_mode.server': MagicMock(mcp=mock_mcp)}):
+        with patch.dict('sys.modules', {'python_voicemode.server': MagicMock(mcp=mock_mcp)}):
             with patch('uvicorn.run') as mock_uvicorn:
                 result = runner.invoke(
-                    voice_mode_main_cli,
+                    python_voicemode_main_cli,
                     ['serve', '--transport', 'sse', '--secret', 'mysecret']
                 )
 

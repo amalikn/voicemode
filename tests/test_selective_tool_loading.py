@@ -18,15 +18,15 @@ import sys
 os.environ['VOICEMODE_TOOLS'] = 'converse'
 
 # Import after setting env var
-from voice_mode import tools
+from python_voicemode import tools
 
 # Check which tool modules are loaded
-loaded_modules = [m for m in sys.modules.keys() if 'voice_mode.tools' in m]
+loaded_modules = [m for m in sys.modules.keys() if 'python_voicemode.tools' in m]
 print('LOADED:', sorted(loaded_modules))
 
 # Verify statistics module is NOT loaded
-assert 'voice_mode.tools.statistics' not in sys.modules
-assert 'voice_mode.tools.converse' in sys.modules
+assert 'python_voicemode.tools.statistics' not in sys.modules
+assert 'python_voicemode.tools.converse' in sys.modules
 print('SUCCESS')
 """],
         capture_output=True,
@@ -35,8 +35,8 @@ print('SUCCESS')
     
     assert result.returncode == 0, f"Failed: {result.stderr}"
     assert "SUCCESS" in result.stdout
-    assert "voice_mode.tools.converse" in result.stdout
-    assert "voice_mode.tools.statistics" not in result.stdout.replace("LOADED:", "")
+    assert "python_voicemode.tools.converse" in result.stdout
+    assert "python_voicemode.tools.statistics" not in result.stdout.replace("LOADED:", "")
 
 
 def test_selective_loading_multiple_tools():
@@ -47,13 +47,13 @@ import os
 import sys
 os.environ['VOICEMODE_TOOLS_ENABLED'] = 'converse,statistics'
 
-from voice_mode import tools
+from python_voicemode import tools
 
-loaded_modules = [m for m in sys.modules.keys() if 'voice_mode.tools' in m]
+loaded_modules = [m for m in sys.modules.keys() if 'python_voicemode.tools' in m]
 print('LOADED:', sorted(loaded_modules))
 
-assert 'voice_mode.tools.converse' in sys.modules
-assert 'voice_mode.tools.statistics' in sys.modules
+assert 'python_voicemode.tools.converse' in sys.modules
+assert 'python_voicemode.tools.statistics' in sys.modules
 print('SUCCESS')
 """],
         capture_output=True,
@@ -76,18 +76,18 @@ os.environ.pop('VOICEMODE_TOOLS', None)
 os.environ.pop('VOICEMODE_TOOLS_ENABLED', None)
 os.environ.pop('VOICEMODE_TOOLS_DISABLED', None)
 
-from voice_mode import tools
+from python_voicemode import tools
 
-loaded_modules = [m for m in sys.modules.keys() if 'voice_mode.tools' in m]
+loaded_modules = [m for m in sys.modules.keys() if 'python_voicemode.tools' in m]
 print('LOADED:', sorted(loaded_modules))
 
 # Should only load essential tools by default (converse, service, connect_status)
-tool_count = len([m for m in loaded_modules if m.startswith('voice_mode.tools.')])
+tool_count = len([m for m in loaded_modules if m.startswith('python_voicemode.tools.')])
 print(f'Tool count: {tool_count}')
 assert tool_count == 3, f"Expected 3 tools (converse, service, connect_status), got {tool_count}"
-assert 'voice_mode.tools.converse' in sys.modules
-assert 'voice_mode.tools.service' in sys.modules
-assert 'voice_mode.tools.connect_status' in sys.modules
+assert 'python_voicemode.tools.converse' in sys.modules
+assert 'python_voicemode.tools.service' in sys.modules
+assert 'python_voicemode.tools.connect_status' in sys.modules
 print('SUCCESS')
 """],
         capture_output=True,
@@ -111,10 +111,10 @@ logging.basicConfig(level=logging.WARNING)
 
 os.environ['VOICEMODE_TOOLS_ENABLED'] = 'converse,nonexistent_tool'
 
-from voice_mode import tools
+from python_voicemode import tools
 
 # The valid tool should still load
-assert 'voice_mode.tools.converse' in sys.modules
+assert 'python_voicemode.tools.converse' in sys.modules
 print('SUCCESS')
 """],
         capture_output=True,
@@ -136,10 +136,10 @@ import sys
 os.environ['VOICEMODE_TOOLS'] = 'converse'
 
 # Import the tracking function
-from voice_mode.statistics_tracking import track_voice_interaction
+from python_voicemode.statistics_tracking import track_voice_interaction
 
 # Verify statistics tools module is not loaded
-assert 'voice_mode.tools.statistics' not in sys.modules
+assert 'python_voicemode.tools.statistics' not in sys.modules
 
 # Verify the function exists and is callable
 assert callable(track_voice_interaction)
@@ -163,10 +163,10 @@ import sys
 
 os.environ['VOICEMODE_TOOLS_ENABLED'] = ''
 
-from voice_mode import tools
+from python_voicemode import tools
 
-loaded_modules = [m for m in sys.modules.keys() if 'voice_mode.tools' in m]
-tool_count = len([m for m in loaded_modules if m.startswith('voice_mode.tools.')])
+loaded_modules = [m for m in sys.modules.keys() if 'python_voicemode.tools' in m]
+tool_count = len([m for m in loaded_modules if m.startswith('python_voicemode.tools.')])
 print(f'Tool count with empty string: {tool_count}')
 assert tool_count > 5, f"Expected more than 5 tools, got {tool_count}"
 print('SUCCESS')
@@ -188,10 +188,10 @@ import sys
 
 os.environ['VOICEMODE_TOOLS_ENABLED'] = ' converse , statistics '
 
-from voice_mode import tools
+from python_voicemode import tools
 
-assert 'voice_mode.tools.converse' in sys.modules
-assert 'voice_mode.tools.statistics' in sys.modules
+assert 'python_voicemode.tools.converse' in sys.modules
+assert 'python_voicemode.tools.statistics' in sys.modules
 print('SUCCESS')
 """],
         capture_output=True,

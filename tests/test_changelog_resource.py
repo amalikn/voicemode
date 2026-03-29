@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import patch, mock_open
 from pathlib import Path
 
-from voice_mode.resources.changelog import changelog_resource
+from python_voicemode.resources.changelog import changelog_resource
 
 
 def test_changelog_resource_finds_file_from_source():

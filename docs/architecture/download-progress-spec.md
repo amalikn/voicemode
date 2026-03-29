@@ -116,7 +116,7 @@ For CI environments or debug mode:
 
 ### 1. Create Unified Download Function
 ```python
-# voice_mode/utils/download.py
+# python_voicemode/utils/download.py
 async def download_with_progress(
     url: str,
     destination: Path,
@@ -156,7 +156,7 @@ def detect_progress_style():
 
 **Whisper Models:**
 ```python
-# voice_mode/utils/services/whisper_helpers.py
+# python_voicemode/utils/services/whisper_helpers.py
 async def download_whisper_model(...):
     await download_with_progress(
         url=model_url,
@@ -167,7 +167,7 @@ async def download_whisper_model(...):
 
 **Core ML Models:**
 ```python
-# voice_mode/utils/services/whisper_helpers.py
+# python_voicemode/utils/services/whisper_helpers.py
 async def download_coreml_model(...):
     await download_with_progress(
         url=coreml_url,

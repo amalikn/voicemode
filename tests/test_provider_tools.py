@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock, patch, AsyncMock
 from datetime import datetime, timezone
 
-from voice_mode.provider_discovery import ProviderRegistry, EndpointInfo
+from python_voicemode.provider_discovery import ProviderRegistry, EndpointInfo
 
 
 class TestRefreshProviderRegistry:
@@ -86,8 +86,8 @@ class TestProviderToolsIntegration:
     @pytest.mark.asyncio
     async def test_refresh_creates_valid_endpoints(self):
         """Test that refresh operation creates valid EndpointInfo objects."""
-        from voice_mode.tools.providers import provider_registry
-        from voice_mode.config import TTS_BASE_URLS, STT_BASE_URLS
+        from python_voicemode.tools.providers import provider_registry
+        from python_voicemode.config import TTS_BASE_URLS, STT_BASE_URLS
         
         # This test verifies the actual fix works in context
         # by checking that EndpointInfo objects are created correctly
@@ -97,8 +97,8 @@ class TestProviderToolsIntegration:
         test_tts_urls = ["http://127.0.0.1:8880/v1"]
         test_stt_urls = ["http://127.0.0.1:2022/v1"]
         
-        with patch('voice_mode.tools.providers.TTS_BASE_URLS', test_tts_urls), \
-             patch('voice_mode.tools.providers.STT_BASE_URLS', test_stt_urls):
+        with patch('python_voicemode.tools.providers.TTS_BASE_URLS', test_tts_urls), \
+             patch('python_voicemode.tools.providers.STT_BASE_URLS', test_stt_urls):
             
             # The fix ensures this code creates EndpointInfo with base_url=
             # instead of url=, preventing the TypeError

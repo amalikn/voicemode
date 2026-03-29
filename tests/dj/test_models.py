@@ -2,7 +2,7 @@
 
 import pytest
 
-from voice_mode.dj import CommandResult, TrackStatus
+from python_voicemode.dj import CommandResult, TrackStatus
 
 
 class TestCommandResult:

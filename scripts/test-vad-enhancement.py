@@ -6,7 +6,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from voice_mode.tools.converse import record_audio_with_silence_detection
+from python_voicemode.tools.converse import record_audio_with_silence_detection
 
 async def test_vad_waiting():
     print("Testing VAD enhancement - waiting for speech indefinitely...")

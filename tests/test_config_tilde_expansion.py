@@ -14,7 +14,7 @@ class TestConfigTildeExpansion(unittest.TestCase):
     def test_expand_path_with_tilde(self):
         """Test that expand_path correctly expands tilde to home directory."""
         # Import inside test to avoid side effects
-        from voice_mode.config import expand_path
+        from python_voicemode.config import expand_path
         
         # Test tilde expansion
         result = expand_path("~/test/path")
@@ -23,7 +23,7 @@ class TestConfigTildeExpansion(unittest.TestCase):
     
     def test_expand_path_with_env_var(self):
         """Test that expand_path correctly expands environment variables."""
-        from voice_mode.config import expand_path
+        from python_voicemode.config import expand_path
         
         # Set a test environment variable
         with patch.dict(os.environ, {"TEST_VAR": "/custom/path"}):
@@ -33,7 +33,7 @@ class TestConfigTildeExpansion(unittest.TestCase):
     
     def test_expand_path_with_tilde_and_env_var(self):
         """Test that expand_path handles both tilde and env vars."""
-        from voice_mode.config import expand_path
+        from python_voicemode.config import expand_path
         
         with patch.dict(os.environ, {"SUBDIR": "mydir"}):
             result = expand_path("~/$SUBDIR/test")
@@ -54,7 +54,7 @@ class TestConfigTildeExpansion(unittest.TestCase):
         with patch.dict(os.environ, test_env, clear=False):
             # Import config module (this will use the patched environment)
             import importlib
-            import voice_mode.config as config
+            import python_voicemode.config as config
             importlib.reload(config)
             
             # Check that all paths are properly expanded
@@ -76,7 +76,7 @@ class TestConfigTildeExpansion(unittest.TestCase):
             
             with patch.dict(os.environ, test_env, clear=False):
                 import importlib
-                import voice_mode.config as config
+                import python_voicemode.config as config
                 importlib.reload(config)
                 
                 self.assertEqual(config.BASE_DIR, Path(tmpdir))

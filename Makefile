@@ -109,15 +109,15 @@ build-package:
 build-dev:
 	@echo "Building development package..."
 	@# Save current version
-	@cp voice_mode/__version__.py voice_mode/__version__.py.bak
+	@cp python_voicemode/__version__.py python_voicemode/__version__.py.bak
 	@# Get current version and append .dev suffix with timestamp
-	@CURRENT_VERSION=$$(uv run python -c "exec(open('voice_mode/__version__.py').read()); print(__version__)") && \
+	@CURRENT_VERSION=$$(uv run python -c "exec(open('python_voicemode/__version__.py').read()); print(__version__)") && \
 	DEV_VERSION="$$CURRENT_VERSION.dev$$(date +%Y%m%d%H%M%S)" && \
-	echo "__version__ = \"$$DEV_VERSION\"" > voice_mode/__version__.py && \
+	echo "__version__ = \"$$DEV_VERSION\"" > python_voicemode/__version__.py && \
 	echo "Building version $$DEV_VERSION..." && \
-	uv build || (mv voice_mode/__version__.py.bak voice_mode/__version__.py; exit 1)
+	uv build || (mv python_voicemode/__version__.py.bak python_voicemode/__version__.py; exit 1)
 	@# Restore original version
-	@mv voice_mode/__version__.py.bak voice_mode/__version__.py
+	@mv python_voicemode/__version__.py.bak python_voicemode/__version__.py
 	@echo "Development package built successfully in dist/"
 
 # Run unit tests
@@ -139,7 +139,7 @@ test-package: build-package
 	@cd /tmp && \
 	uv venv test-env && \
 	. test-env/bin/activate && \
-	uv pip install $(CURDIR)/dist/voice_mode-*.whl && \
+	uv pip install $(CURDIR)/dist/python_voicemode-*.whl && \
 	voice-mode --help && \
 	deactivate && \
 	rm -rf test-env
@@ -444,7 +444,7 @@ test-installer-ubuntu: build-installer
 		echo "Install from: https://github.com/cirruslabs/tart"; \
 		exit 1; \
 	fi
-	@WHEEL=$$(ls -t installer/dist/voice_mode_install-*.whl | head -1); \
+	@WHEEL=$$(ls -t installer/dist/*mode_install-*.whl | head -1); \
 	if [ -z "$$WHEEL" ]; then \
 		echo "❌ Wheel file not found. Run 'make build-installer' first."; \
 		exit 1; \
@@ -460,7 +460,7 @@ test-installer-fedora: build-installer
 		echo "Install from: https://github.com/cirruslabs/tart"; \
 		exit 1; \
 	fi
-	@WHEEL=$$(ls -t installer/dist/voice_mode_install-*.whl | head -1); \
+	@WHEEL=$$(ls -t installer/dist/*mode_install-*.whl | head -1); \
 	if [ -z "$$WHEEL" ]; then \
 		echo "❌ Wheel file not found. Run 'make build-installer' first."; \
 		exit 1; \
@@ -476,7 +476,7 @@ test-installer-all: build-installer
 		echo "Install from: https://github.com/cirruslabs/tart"; \
 		exit 1; \
 	fi
-	@WHEEL=$$(ls -t installer/dist/voice_mode_install-*.whl | head -1); \
+	@WHEEL=$$(ls -t installer/dist/*mode_install-*.whl | head -1); \
 	if [ -z "$$WHEEL" ]; then \
 		echo "❌ Wheel file not found. Run 'make build-installer' first."; \
 		exit 1; \
@@ -496,7 +496,7 @@ test-installer-ci: build-installer
 		echo "❌ Docker is not installed!"; \
 		exit 1; \
 	fi
-	@WHEEL=$$(ls -t installer/dist/voice_mode_install-*.whl | head -1); \
+	@WHEEL=$$(ls -t installer/dist/*mode_install-*.whl | head -1); \
 	if [ -z "$$WHEEL" ]; then \
 		echo "❌ Wheel file not found. Run 'make build-installer' first."; \
 		exit 1; \

@@ -3,7 +3,7 @@
 import pytest
 from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
-from voice_mode.cli import voice_mode_main_cli
+from python_voicemode.cli import python_voicemode_main_cli
 
 
 class TestWhisperModelsCLI:
@@ -14,7 +14,7 @@ class TestWhisperModelsCLI:
         runner = CliRunner()
 
         # The command is now 'whisper model --all' not 'whisper models'
-        result = runner.invoke(voice_mode_main_cli, ['whisper', 'model', '--all'])
+        result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model', '--all'])
 
         assert result.exit_code == 0
         assert 'Available Whisper Models' in result.output or 'Whisper Models' in result.output
@@ -28,7 +28,7 @@ class TestWhisperModelActiveCLI:
         runner = CliRunner()
 
         # Command is now just 'whisper model' without 'active'
-        result = runner.invoke(voice_mode_main_cli, ['whisper', 'model'])
+        result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model'])
 
         assert result.exit_code == 0 or result.exit_code == 1  # May fail if no models installed
         assert 'Active' in result.output or 'model' in result.output.lower()
@@ -39,10 +39,10 @@ class TestWhisperModelActiveCLI:
 
         # Command is now 'whisper model <model>' not 'whisper model active <model>'
         # With --no-install to avoid actually installing
-        with patch('voice_mode.tools.whisper.models.is_whisper_model_installed') as mock_installed:
+        with patch('python_voicemode.tools.whisper.models.is_whisper_model_installed') as mock_installed:
             mock_installed.return_value = True
 
-            result = runner.invoke(voice_mode_main_cli, ['whisper', 'model', 'small', '--no-install'])
+            result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model', 'small', '--no-install'])
 
             assert result.exit_code == 0
             assert "small" in result.output.lower()
@@ -52,10 +52,10 @@ class TestWhisperModelActiveCLI:
         runner = CliRunner()
 
         # With --no-install, setting a non-installed model should fail
-        with patch('voice_mode.tools.whisper.models.is_whisper_model_installed') as mock_installed:
+        with patch('python_voicemode.tools.whisper.models.is_whisper_model_installed') as mock_installed:
             mock_installed.return_value = False
 
-            result = runner.invoke(voice_mode_main_cli, ['whisper', 'model', 'small', '--no-install'])
+            result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model', 'small', '--no-install'])
 
             # Should fail with exit code 1
             assert result.exit_code == 1
@@ -73,7 +73,7 @@ class TestWhisperModelInstallCLI:
         with patch('asyncio.run') as mock_run:
             mock_run.return_value = '{"success": true, "results": [{"model": "large-v2"}]}'
 
-            result = runner.invoke(voice_mode_main_cli, ['whisper', 'model', 'install'])
+            result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model', 'install'])
 
             assert result.exit_code == 0
             assert '✅ Model download completed!' in result.output
@@ -86,7 +86,7 @@ class TestWhisperModelInstallCLI:
         with patch('asyncio.run') as mock_run:
             mock_run.return_value = '{"success": true, "results": [{"model": "small"}]}'
 
-            result = runner.invoke(voice_mode_main_cli, ['whisper', 'model', 'install', 'small'])
+            result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model', 'install', 'small'])
 
             assert result.exit_code == 0
             assert '✅ Model download completed!' in result.output
@@ -99,7 +99,7 @@ class TestWhisperModelInstallCLI:
         with patch('asyncio.run') as mock_run:
             mock_run.return_value = '{"success": false, "error": "Invalid model: invalid-model"}'
 
-            result = runner.invoke(voice_mode_main_cli, ['whisper', 'model', 'install', 'invalid-model'])
+            result = runner.invoke(python_voicemode_main_cli, ['whisper', 'model', 'install', 'invalid-model'])
 
             # Should still exit 0 but show error message
             assert result.exit_code == 0

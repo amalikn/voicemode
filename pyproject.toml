@@ -94,6 +94,9 @@ docs = [
     "mkdocs-minify-plugin>=0.7.0",
     "mkdocs-gen-files>=0.5.0",
 ]
+pipecat = [
+    "pipecat-ai>=0.0.106",
+]
 
 [project.urls]
 Homepage = "https://getvoicemode.com/"
@@ -101,27 +104,27 @@ Repository = "https://github.com/mbailey/voicemode"
 Issues = "https://github.com/mbailey/voicemode/issues"
 
 [project.scripts]
-voice-mode = "voice_mode.cli:voice_mode"
-voicemode = "voice_mode.cli:voice_mode"
+voice-mode = "python_voicemode.cli:python_voicemode"
+voicemode = "python_voicemode.cli:python_voicemode"
 
 [tool.hatch.build.targets.wheel]
-packages = ["voice_mode"]
+packages = ["python_voicemode"]
 include = [
-  "voice_mode/**/*.py",
-  "voice_mode/**/*.sh",
-  "voice_mode/**/*.plist",
-  "voice_mode/**/*.service",
-  "voice_mode/templates/**/*",
-  "voice_mode/data/**/*.yaml",
-  "voice_mode/data/**/*.json",
-  "voice_mode/data/**/*.cue",
-  "voice_mode/data/**/*.ffmeta",
-  "voice_mode/data/**/*.sha256",
+  "python_voicemode/**/*.py",
+  "python_voicemode/**/*.sh",
+  "python_voicemode/**/*.plist",
+  "python_voicemode/**/*.service",
+  "python_voicemode/templates/**/*",
+  "python_voicemode/data/**/*.yaml",
+  "python_voicemode/data/**/*.json",
+  "python_voicemode/data/**/*.cue",
+  "python_voicemode/data/**/*.ffmeta",
+  "python_voicemode/data/**/*.sha256",
 ]
 # artifacts overrides .gitignore for VCS-ignored files that should be packaged
 artifacts = [
-  "voice_mode/data/**/*.mp3",
-  "voice_mode/data/**/*.wav",
+  "python_voicemode/data/**/*.mp3",
+  "python_voicemode/data/**/*.wav",
 ]
 exclude = [
   "**/__pycache__",
@@ -139,7 +142,7 @@ exclude = [
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "/voice_mode",
+  "/python_voicemode",
   "/README.md",
   "/LICENSE",
   "/pyproject.toml",
@@ -147,8 +150,8 @@ include = [
 ]
 # artifacts overrides .gitignore for VCS-ignored files that should be packaged
 artifacts = [
-  "voice_mode/data/**/*.mp3",
-  "voice_mode/data/**/*.wav",
+  "python_voicemode/data/**/*.mp3",
+  "python_voicemode/data/**/*.wav",
 ]
 exclude = [
   "**/__pycache__",
@@ -160,7 +163,7 @@ exclude = [
 ]
 
 [tool.hatch.version]
-path = "voice_mode/__version__.py"
+path = "python_voicemode/__version__.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -177,7 +180,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--ignore=tests/manual",
-    "--cov=voice_mode",
+    "--cov=python_voicemode",
     "--cov-branch",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html",
@@ -194,7 +197,7 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["voice_mode"]
+source = ["python_voicemode"]
 branch = true
 parallel = true
 omit = [

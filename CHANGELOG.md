@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Local/hybrid voice runtime rollout tracking**
+  - Added phased runtime documentation and audit reports under `docs/reports/`
+  - Added operator-facing runtime guide coverage for the `voicemode voice` stack
+
+- **Phase 1 runtime foundation**
+  - Explicit state-machine driven local/hybrid runtime
+  - Cancel-and-replace turn ownership and barge-in handling
+  - Runtime launcher, status/diag/control CLI surface, and SQLite session/event store
+  - Interruptible read-aloud entry path and mpv-backed cancellable playback
+
+- **Phase 2 runtime completion**
+  - Conversational Silero VAD runtime path with stable fallback handling
+  - Local Ollama voice-shell for acknowledgements, summaries, and routing hints
+  - Codex CLI escalation bridge for deeper coding / repo turns
+  - Pipecat optional dependency and runtime adapter health surface
+
+- **Phase 3 implementation start**
+  - Realtime timeout and failure recovery now return the runtime to a ready state instead of leaving task failures implicit
+  - Runtime status/diag now expose SQLite-backed session, event, and read-progress summaries
+  - Generated Hammerspoon status now shows clearer state labels and runtime tooltips
+  - Realtime tests now cover timeout and failure recovery paths
+
+- **Phase 3 runtime completion**
+  - Read-aloud control paths now have focused coverage for continue, repeat, skip, summarize, and stop
+  - Runtime status snapshots now assert diagnostics coverage in tests
+  - CLI runtime tests now cover status, diag, control, read, and Hammerspoon export behavior
+  - Read-aloud control polish now keeps `last_response` aligned with repeat/skip playback
+  - Rapid overlapping read-control handoff no longer leaks an un-awaited coroutine during task replacement
+
+### Changed
+
+- **Repo docs now track rollout state**
+  - README now exposes the phased runtime status and canonical report links
+  - runtime documentation now reflects Pipecat health and the completed Phase 2 stack
+  - revision history now records the phase milestone work as operator-visible updates
+  - runtime docs now reflect the Phase 3 start on diagnostics, status polish, and resilience hardening
+  - runtime docs and reports now mark Phase 3 complete for the current repo/runtime scope
+
 ## [8.4.0] - 2026-03-04
 
 ### Added
@@ -629,7 +669,7 @@ VoiceMode now understands natural voice commands during conversations:
   - "Waiting one minute" - acknowledges pause request
   - "Ready to listen" - signals end of wait period
   - Fallback to TTS if audio files unavailable
-  - Audio stored in `voice_mode/data/soundfonts/default/system-messages/`
+  - Audio stored in `python_voicemode/data/soundfonts/default/system-messages/`
 
 - **Claude Code Skill for VoiceMode** (VM-210)
   - New SKILL.md with comprehensive voice interaction instructions
@@ -842,10 +882,10 @@ VoiceMode now understands natural voice commands during conversations:
 
 ### Fixed
 - **Installer Package Naming Consistency**
-  - Fixed wheel filename pattern in Makefile from `voicemode_install` to `voice_mode_install`
+  - Fixed wheel filename pattern in Makefile from the module-style name to the normalized wheel filename
   - Corrected package name from `voicemode-install` to `voice-mode-install` in all documentation
   - Updated README.md, CLI examples, and test scripts to use correct hyphenated name
-  - PyPI package naming now consistent: `voice-mode-install` (package) → `voice_mode_install` (wheel) → `voicemode_install` (module)
+  - PyPI package naming now consistent: `voice-mode-install` (package) → normalized wheel filename → `voicemode_install` (module)
   - Synchronized installer version (5.1.4) with voicemode for simpler version management
 
 ## [5.1.3] - 2025-10-12
@@ -899,7 +939,7 @@ VoiceMode now understands natural voice commands during conversations:
 - **Lazy-Loading System Dependency Management** - Complete dependency checking and installation system
   - Automatic detection and installation of system dependencies on-demand
   - Lazy dependency checking that happens when needed (core deps on converse, build deps on service install)
-  - Single source of truth in `voice_mode/dependencies.yaml` for all platform dependencies
+  - Single source of truth in `python_voicemode/dependencies.yaml` for all platform dependencies
   - CLI command `voicemode deps` to check and install dependencies interactively
   - Non-interactive mode with `--yes` flag for automation
   - Component-specific checking with `--component` flag (whisper, kokoro, core)
@@ -1227,7 +1267,7 @@ VoiceMode now understands natural voice commands during conversations:
   - Full CLI interface for managing pronunciation rules
   - MCP tool for LLM-based rule management with `pronounce` tool
   - Integrated into converse tool for automatic text processing
-  - New configuration file: `voice_mode/data/default_pronunciation.yaml`
+  - New configuration file: `python_voicemode/data/default_pronunciation.yaml`
 
 ## [4.0.1] - 2025-09-01
 
@@ -1370,7 +1410,7 @@ VoiceMode now understands natural voice commands during conversations:
 
 - **Installer script stability**
   - Fixed script exit after Whisper installation when CoreML setup CLI check fails
-  - Properly handle check_voice_mode_cli failures in setup_coreml_acceleration
+  - Properly handle check_python_voicemode_cli failures in setup_coreml_acceleration
   - Installer now continues with Kokoro and LiveKit even if CoreML setup encounters issues
   - Fixed installer exit issue after Whisper when checking for voicemode CLI
 
@@ -2013,9 +2053,9 @@ VoiceMode now understands natural voice commands during conversations:
 
 ### Changed
 - Reorganized helper functions from tools/ to utils/
-  - `voice_mode/tools/services/common.py` → `voice_mode/utils/services/common.py`
-  - `voice_mode/tools/services/*/helpers.py` → `voice_mode/utils/services/*_helpers.py`
-  - `voice_mode/tools/services/version_helpers.py` → `voice_mode/utils/version_helpers.py`
+  - `python_voicemode/tools/services/common.py` → `python_voicemode/utils/services/common.py`
+  - `python_voicemode/tools/services/*/helpers.py` → `python_voicemode/utils/services/*_helpers.py`
+  - `python_voicemode/tools/services/version_helpers.py` → `python_voicemode/utils/version_helpers.py`
   - Helper functions are no longer exposed as MCP tools
 
 ### Fixed
@@ -2234,7 +2274,7 @@ VoiceMode now understands natural voice commands during conversations:
 
 ### Fixed
 - Fixed WebRTC VAD sample rate compatibility issue
-  - VAD requires 8kHz, 16kHz, or 32kHz but voice_mode uses 24kHz
+  - VAD requires 8kHz, 16kHz, or 32kHz but python_voicemode uses 24kHz
   - Implemented proper sample extraction for VAD processing
   - Silence detection now works correctly with 24kHz audio
 - Added automatic STT (Speech-to-Text) failover mechanism
@@ -2529,7 +2569,7 @@ This change reflects our vision for the project's future. While MCP (Model Conte
 ## [0.1.26] - 2025-06-17
 
 ### Fixed
-- Added missing voice_mode() function to cli.py for voice-mode command
+- Added missing python_voicemode() function to cli.py for voice-mode command
 
 ## [0.1.25] - 2025-06-17
 

@@ -34,6 +34,7 @@ The installer will:
 - Install missing system dependencies (FFmpeg, PortAudio, etc.)
 - Set up your environment for VoiceMode
 - Offer to install local voice services (Whisper STT and Kokoro TTS)
+- Check the configured local runtime Ollama helper model and prompt to pull it if it is missing
 
 **Alternative UV installation methods:**
 - **macOS**: `brew install uv`

@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 import pytest
 
-from voice_mode.tools.service import load_service_template
+from python_voicemode.tools.service import load_service_template
 
 
 def test_systemd_template_simplified():
@@ -17,7 +17,7 @@ def test_systemd_template_simplified():
     from unittest.mock import patch
 
     # Mock platform to get Linux templates
-    with patch('voice_mode.tools.service.platform.system', return_value='Linux'):
+    with patch('python_voicemode.tools.service.platform.system', return_value='Linux'):
         # Test Kokoro systemd template - simplified
         kokoro_template = load_service_template("kokoro")
         assert "{START_SCRIPT}" in kokoro_template
@@ -37,7 +37,7 @@ def test_unified_startup_scripts_exist():
     Note: Only Whisper uses a unified startup script in templates.
     Kokoro uses its own startup scripts that come with the installation.
     """
-    templates_dir = Path(__file__).parent.parent / "voice_mode" / "templates" / "scripts"
+    templates_dir = Path(__file__).parent.parent / "python_voicemode" / "templates" / "scripts"
 
     # Check Whisper unified startup script (used by both macOS and Linux)
     whisper_script = templates_dir / "start-whisper-server.sh"
@@ -54,7 +54,7 @@ def test_startup_script_content():
     Note: Only Whisper has a unified startup script to test.
     Kokoro uses its own scripts from the installation package.
     """
-    templates_dir = Path(__file__).parent.parent / "voice_mode" / "templates" / "scripts"
+    templates_dir = Path(__file__).parent.parent / "python_voicemode" / "templates" / "scripts"
 
     # Check Whisper startup script
     whisper_script = templates_dir / "start-whisper-server.sh"
@@ -77,7 +77,7 @@ def test_template_placeholders():
     from unittest.mock import patch
 
     # Mock platform to get Linux templates
-    with patch('voice_mode.tools.service.platform.system', return_value='Linux'):
+    with patch('python_voicemode.tools.service.platform.system', return_value='Linux'):
         # Kokoro templates - simplified to just START_SCRIPT
         kokoro_systemd = load_service_template("kokoro")
         assert "{START_SCRIPT}" in kokoro_systemd

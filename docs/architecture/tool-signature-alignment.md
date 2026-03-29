@@ -13,7 +13,7 @@ Align the tool names and function signatures between VoiceMode (local MCP) and V
 
 ## Current State
 
-### VoiceMode Local (`voice_mode/tools/`)
+### VoiceMode Local (`python_voicemode/tools/`)
 Default tools exposed:
 - `converse(message, wait_for_response, voice, ...)` — TTS + STT via local mic/speakers
 - `service(service_name, action, lines)` — manage Whisper/Kokoro services

@@ -27,10 +27,10 @@ from collections import defaultdict
 
 from flask import Flask, render_template_string, jsonify, send_file, request
 
-# Import get_audio_path from voice_mode
+# Import get_audio_path from python_voicemode
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from voice_mode.core import get_audio_path
+from python_voicemode.core import get_audio_path
 
 app = Flask(__name__)
 

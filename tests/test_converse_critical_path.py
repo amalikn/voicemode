@@ -15,18 +15,18 @@ class TestConverseOpenAIErrors:
     @pytest.mark.asyncio
     async def test_converse_reports_insufficient_quota_clearly(self):
         """Test that insufficient quota errors are clearly reported to users."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
         # Mock at the core.text_to_speech level to avoid streaming complications
-        with patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.core.text_to_speech') as mock_tts:
             # Simulate OpenAI quota exceeded error
             mock_tts.side_effect = Exception(
                 "Error code: 429 - {'error': {'message': 'You exceeded your current quota, "
                 "please check your plan and billing details.', 'type': 'insufficient_quota'}}"
             )
 
-            with patch('voice_mode.config.TTS_BASE_URLS', ['https://api.openai.com/v1']):
-                with patch('voice_mode.config.OPENAI_API_KEY', 'test-api-key'):
+            with patch('python_voicemode.config.TTS_BASE_URLS', ['https://api.openai.com/v1']):
+                with patch('python_voicemode.config.OPENAI_API_KEY', 'test-api-key'):
                     result = await converse.fn(
                         message="Test message",
                         wait_for_response=False
@@ -40,18 +40,18 @@ class TestConverseOpenAIErrors:
     @pytest.mark.asyncio
     async def test_converse_reports_invalid_api_key_clearly(self):
         """Test that invalid API key errors are clearly reported."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
         # Mock at the core.text_to_speech level to avoid streaming complications
-        with patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.core.text_to_speech') as mock_tts:
             # Simulate invalid API key error
             mock_tts.side_effect = Exception(
                 "Error code: 401 - {'error': {'message': 'Incorrect API key provided', "
                 "'type': 'invalid_request_error'}}"
             )
 
-            with patch('voice_mode.config.TTS_BASE_URLS', ['https://api.openai.com/v1']):
-                with patch('voice_mode.config.OPENAI_API_KEY', 'invalid-key'):
+            with patch('python_voicemode.config.TTS_BASE_URLS', ['https://api.openai.com/v1']):
+                with patch('python_voicemode.config.OPENAI_API_KEY', 'invalid-key'):
                     result = await converse.fn(
                         message="Test message",
                         wait_for_response=False
@@ -65,17 +65,17 @@ class TestConverseOpenAIErrors:
     @pytest.mark.asyncio
     async def test_converse_reports_rate_limit_clearly(self):
         """Test that rate limit errors are clearly reported."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
         # Mock at the core.text_to_speech level to avoid streaming complications
-        with patch('voice_mode.core.text_to_speech') as mock_tts:
+        with patch('python_voicemode.core.text_to_speech') as mock_tts:
             # Simulate rate limit error
             mock_tts.side_effect = Exception(
                 "Error code: 429 - {'error': {'message': 'Rate limit reached', "
                 "'type': 'rate_limit_exceeded'}}"
             )
 
-            with patch('voice_mode.config.TTS_BASE_URLS', ['https://api.openai.com/v1']):
+            with patch('python_voicemode.config.TTS_BASE_URLS', ['https://api.openai.com/v1']):
                 result = await converse.fn(
                     message="Test message",
                     wait_for_response=False
@@ -93,10 +93,10 @@ class TestConverseFailoverBehavior:
     @pytest.mark.asyncio
     async def test_converse_tries_all_configured_endpoints(self):
         """Test that converse tries all configured endpoints before giving up."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
         # Use simple_tts_failover mock which is easier to test
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (False, None, {
                 'error_type': 'all_providers_failed',
                 'attempted_endpoints': [
@@ -110,7 +110,7 @@ class TestConverseFailoverBehavior:
                 'https://api.openai.com/v1'   # OpenAI
             ]
 
-            with patch('voice_mode.config.TTS_BASE_URLS', test_urls):
+            with patch('python_voicemode.config.TTS_BASE_URLS', test_urls):
                 result = await converse.fn(
                     message="Test message",
                     wait_for_response=False
@@ -124,10 +124,10 @@ class TestConverseFailoverBehavior:
     @pytest.mark.asyncio
     async def test_converse_succeeds_with_second_endpoint(self):
         """Test that converse succeeds when first endpoint fails but second works."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
         # Mock successful TTS
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (True, {'duration_ms': 100}, {'provider': 'openai'})
 
             result = await converse.fn(
@@ -146,9 +146,9 @@ class TestConverseErrorMessages:
     @pytest.mark.asyncio
     async def test_error_message_suggests_checking_services(self):
         """Test that errors suggest checking if services are running."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (False, None, {
                 'error_type': 'all_providers_failed',
                 'attempted_endpoints': [
@@ -157,7 +157,7 @@ class TestConverseErrorMessages:
                 ]
             })
 
-            with patch('voice_mode.config.OPENAI_API_KEY', None):
+            with patch('python_voicemode.config.OPENAI_API_KEY', None):
                 result = await converse.fn(
                     message="Test",
                     wait_for_response=False
@@ -171,9 +171,9 @@ class TestConverseErrorMessages:
     @pytest.mark.asyncio
     async def test_error_message_includes_provider_info(self):
         """Test that errors indicate which provider failed."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (False, None, {
                 'error_type': 'all_providers_failed',
                 'attempted_endpoints': [
@@ -200,18 +200,18 @@ class TestConverseSTTFailures:
     @pytest.mark.asyncio
     async def test_stt_failure_reports_clearly(self):
         """Test that STT failures are reported clearly."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
         import numpy as np
 
         # Mock successful TTS but failed STT
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (True, {'duration_ms': 100}, {'provider': 'kokoro'})
 
-            with patch('voice_mode.tools.converse.record_audio') as mock_record:
+            with patch('python_voicemode.tools.converse.record_audio') as mock_record:
                 # Return a proper numpy array instead of bytes
                 mock_record.return_value = np.array([0, 100, 200, 100, 0], dtype=np.int16)
 
-                with patch('voice_mode.simple_failover.simple_stt_failover') as mock_stt:
+                with patch('python_voicemode.simple_failover.simple_stt_failover') as mock_stt:
                     mock_stt.return_value = {
                         'error_type': 'connection_failed',
                         'attempted_endpoints': [
@@ -236,17 +236,17 @@ class TestConverseSTTFailures:
     @pytest.mark.asyncio
     async def test_stt_no_speech_detected(self):
         """Test handling when no speech is detected."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
         import numpy as np
 
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (True, {'duration_ms': 100}, {'provider': 'kokoro'})
 
-            with patch('voice_mode.tools.converse.record_audio') as mock_record:
+            with patch('python_voicemode.tools.converse.record_audio') as mock_record:
                 # Return a proper numpy array instead of bytes
                 mock_record.return_value = np.array([0, 0, 0, 0, 0], dtype=np.int16)
 
-                with patch('voice_mode.simple_failover.simple_stt_failover') as mock_stt:
+                with patch('python_voicemode.simple_failover.simple_stt_failover') as mock_stt:
                     mock_stt.return_value = {
                         'error_type': 'no_speech',
                         'provider': 'whisper'
@@ -267,9 +267,9 @@ class TestConverseMetrics:
     @pytest.mark.asyncio
     async def test_converse_includes_timing_metrics(self):
         """Test that converse includes timing information when successful."""
-        from voice_mode.tools.converse import converse
+        from python_voicemode.tools.converse import converse
 
-        with patch('voice_mode.simple_failover.simple_tts_failover') as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover') as mock_tts:
             mock_tts.return_value = (True, {
                 'duration_ms': 150,
                 'ttfb_ms': 50

@@ -34,6 +34,26 @@ export OPENAI_API_KEY="your-api-key"  # Fallback
 # Local services auto-detected when running
 ```
 
+### New Local/Hybrid Voice Runtime
+
+The `voicemode voice` runtime uses its own namespace so it can coexist with the
+existing MCP voice stack:
+
+```bash
+export VOICEMODE_RUNTIME_MODE=walkie-talkie
+export VOICEMODE_RUNTIME_PORT=8766
+export VOICEMODE_RUNTIME_DB=/Volumes/Data/_ai/_mcp/mcp-data/voicemode/realtime/sessions.sqlite3
+export VOICEMODE_RUNTIME_TTS_BASE_URL=http://127.0.0.1:8880/v1
+export VOICEMODE_RUNTIME_STT_BASE_URL=http://127.0.0.1:2022/v1
+export VOICEMODE_OLLAMA_MODEL=phi4-mini
+```
+
+The installer checks this runtime helper model during setup. If the configured
+model is missing, it prompts you to run `ollama pull <model>`.
+
+See the dedicated [Voice Runtime guide](voice-runtime.md) for the control flow,
+Hammerspoon setup, and runtime-specific variables.
+
 ## Configuration System
 
 ### Configuration Precedence

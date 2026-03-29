@@ -13,7 +13,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from voice_mode.serve_middleware import (
+from python_voicemode.serve_middleware import (
     IPAllowlistMiddleware,
     SecretPathMiddleware,
     TokenAuthMiddleware,

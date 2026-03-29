@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
-from voice_mode.dj.mfp import (
+from python_voicemode.dj.mfp import (
     HttpFetcher,
     MfpEpisode,
     MfpService,
@@ -506,7 +506,7 @@ class TestGitHubChapterFetching:
                 return response
             raise HTTPError(url, 404, "Not Found", {}, None)
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service._fetch_chapters_from_github(filename_base)
 
         assert result is not None
@@ -530,7 +530,7 @@ class TestGitHubChapterFetching:
                 return response
             raise HTTPError(url, 404, "Not Found", {}, None)
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service._fetch_chapters_from_github(filename_base)
 
         assert result is not None
@@ -550,7 +550,7 @@ class TestGitHubChapterFetching:
             response.__exit__ = MagicMock(return_value=False)
             return response
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service._fetch_chapters_from_github(filename_base)
 
         # Verify file is cached in the local cache directory
@@ -566,7 +566,7 @@ class TestGitHubChapterFetching:
         def mock_urlopen(url, timeout=None):
             raise TimeoutError("Connection timed out")
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service._fetch_chapters_from_github(filename_base)
 
         assert result is None
@@ -578,7 +578,7 @@ class TestGitHubChapterFetching:
         def mock_urlopen(url, timeout=None):
             raise HTTPError(url, 404, "Not Found", {}, None)
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service._fetch_chapters_from_github(filename_base)
 
         assert result is None
@@ -590,7 +590,7 @@ class TestGitHubChapterFetching:
         def mock_urlopen(url, timeout=None):
             raise URLError("Network unreachable")
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service._fetch_chapters_from_github(filename_base)
 
         assert result is None
@@ -605,7 +605,7 @@ class TestGitHubChapterFetching:
             captured_timeout = timeout
             raise HTTPError(url, 404, "Not Found", {}, None)
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             service._fetch_chapters_from_github(filename_base)
 
         assert captured_timeout == 5
@@ -619,7 +619,7 @@ class TestGitHubChapterFetching:
             urls_tried.append(url)
             raise HTTPError(url, 404, "Not Found", {}, None)
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             service._fetch_chapters_from_github(filename_base)
 
         assert len(urls_tried) == 2
@@ -640,7 +640,7 @@ class TestGitHubChapterFetching:
             # This should never be reached for this filename_base
             raise AssertionError(f"GitHub fetch should not be called when local file exists: {url}")
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service.get_chapters_file(49)
 
         assert result is not None
@@ -677,7 +677,7 @@ class TestGitHubChapterFetching:
                     return response
             raise HTTPError(url, 404, "Not Found", {}, None)
 
-        with patch("voice_mode.dj.mfp.urlopen", mock_urlopen):
+        with patch("python_voicemode.dj.mfp.urlopen", mock_urlopen):
             result = service.get_chapters_file(99)
 
         assert github_was_called, "GitHub should be called as fallback"

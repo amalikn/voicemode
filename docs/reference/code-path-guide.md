@@ -10,31 +10,31 @@ This guide traces the code path from running `voicemode converse` through all th
 **Lines:** 100-102
 ```toml
 [project.scripts]
-voice-mode = "voice_mode.cli:voice_mode"
-voicemode = "voice_mode.cli:voice_mode"
+voice-mode = "python_voicemode.cli:python_voicemode"
+voicemode = "python_voicemode.cli:python_voicemode"
 ```
-Both commands map to the `voice_mode()` function in the CLI module.
+Both commands map to the `python_voicemode()` function in the CLI module.
 
 ### 2. CLI Entry Function
-**File:** `voice_mode/cli.py`
-**Function:** `voice_mode()`
+**File:** `python_voicemode/cli.py`
+**Function:** `python_voicemode()`
 **Lines:** 74-76
 ```python
-def voice_mode() -> None:
+def python_voicemode() -> None:
     """Entry point for voicemode command - starts the MCP server or runs subcommands."""
-    voice_mode_main_cli()
+    python_voicemode_main_cli()
 ```
 This calls the main CLI group.
 
 ### 3. Main CLI Group
-**File:** `voice_mode/cli.py`
-**Function:** `voice_mode_main_cli()`
+**File:** `python_voicemode/cli.py`
+**Function:** `python_voicemode_main_cli()`
 **Lines:** 40-72
 This is a Click command group that handles all subcommands. Without a subcommand, it starts the MCP server. With subcommands, it routes to the appropriate handler.
 
 ### 4. Converse Subcommand
-**File:** `voice_mode/cli.py`
-**Decorator:** `@voice_mode_main_cli.command()`
+**File:** `python_voicemode/cli.py`
+**Decorator:** `@python_voicemode_main_cli.command()`
 **Function:** `converse()`
 **Lines:** 1650-1815
 
@@ -49,7 +49,7 @@ Key parameters:
 The function creates an async wrapper (line 1690) that calls the actual tool implementation.
 
 ### 5. Converse Tool Implementation
-**File:** `voice_mode/tools/converse.py`
+**File:** `python_voicemode/tools/converse.py`
 **Decorator:** `@mcp.tool()`
 **Function:** `converse()`
 **Lines:** 1194-1195 (and beyond)
@@ -62,12 +62,12 @@ This is the main MCP tool that handles:
 - Conversation logging
 
 Key imports:
-- Line 61-70: Core functions from `voice_mode.core`
-- Line 60: Provider registry from `voice_mode.provider_discovery`
+- Line 61-70: Core functions from `python_voicemode.core`
+- Line 60: Provider registry from `python_voicemode.provider_discovery`
 - Line 28: Conversation logger
 
 ### 6. Core Audio Functions
-**File:** `voice_mode/core.py`
+**File:** `python_voicemode/core.py`
 
 Key functions:
 - `get_openai_clients()` - Line 131: Initialize API clients
@@ -78,7 +78,7 @@ Key functions:
 - `cleanup()` - Line 676: Cleanup resources
 
 ### 7. Provider Discovery
-**File:** `voice_mode/provider_discovery.py`
+**File:** `python_voicemode/provider_discovery.py`
 
 Discovers and manages TTS/STT providers:
 - OpenAI API (cloud)
@@ -89,7 +89,7 @@ Discovers and manages TTS/STT providers:
 The provider registry is imported at line 60 of converse.py and used to select the best available provider.
 
 ### 8. Configuration
-**File:** `voice_mode/config.py`
+**File:** `python_voicemode/config.py`
 
 Loaded by converse.py (lines 29-58), provides:
 - Audio settings (sample rate, channels)
@@ -118,19 +118,19 @@ look  # Confirm it's visible
 
 ### Step 2: Show CLI Entry Functions
 ```bash
-# Show the voice_mode() entry point
-show voice_mode/cli.py:74-76
+# Show the python_voicemode() entry point
+show python_voicemode/cli.py:74-76
 look  # Confirm visible
 
 # Show the main CLI group
-show voice_mode/cli.py:40-72
+show python_voicemode/cli.py:40-72
 look  # Confirm visible
 ```
 
 ### Step 3: Show Converse Command
 ```bash
 # Show the converse subcommand definition
-show voice_mode/cli.py:1650-1700
+show python_voicemode/cli.py:1650-1700
 look  # Confirm visible
 
 # Search for the async wrapper
@@ -140,18 +140,18 @@ look  # Confirm visible
 ### Step 4: Show Tool Implementation
 ```bash
 # Open the converse tool file
-show voice_mode/tools/converse.py:1194
+show python_voicemode/tools/converse.py:1194
 look  # Confirm visible
 
 # Show the key imports
-show voice_mode/tools/converse.py:1-100
+show python_voicemode/tools/converse.py:1-100
 look  # Confirm visible
 ```
 
 ### Step 5: Show Core Functions
 ```bash
 # Show the core module with TTS/STT functions
-show voice_mode/core.py
+show python_voicemode/core.py
 look  # Confirm visible
 
 # Highlight text_to_speech function
@@ -161,7 +161,7 @@ look  # Confirm visible
 ### Step 6: Show Provider Discovery
 ```bash
 # Show provider discovery system
-show voice_mode/provider_discovery.py
+show python_voicemode/provider_discovery.py
 look  # Confirm visible
 ```
 
@@ -175,7 +175,7 @@ While showing each file, use voice to narrate:
 converse("Let's trace the voicemode converse command. First, the entry point is in pyproject.toml.", wait_for_response=False)
 # Then show pyproject.toml
 
-converse("When you run voicemode converse, it calls voice_mode function in cli.py", wait_for_response=False)
+converse("When you run voicemode converse, it calls python_voicemode function in cli.py", wait_for_response=False)
 # Then show cli.py entry
 
 converse("This routes to the converse subcommand, which is a Click command", wait_for_response=False)
@@ -198,9 +198,9 @@ converse("Provider discovery finds available TTS and STT services", wait_for_res
 ```
 User runs: voicemode converse
     ↓
-pyproject.toml (scripts) → voice_mode.cli:voice_mode
+pyproject.toml (scripts) → python_voicemode.cli:python_voicemode
     ↓
-cli.py:voice_mode() → voice_mode_main_cli()
+cli.py:python_voicemode() → python_voicemode_main_cli()
     ↓
 cli.py:converse() command (Click subcommand)
     ↓

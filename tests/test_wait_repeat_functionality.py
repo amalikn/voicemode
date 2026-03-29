@@ -12,8 +12,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch, AsyncMock, MagicMock, call
 import numpy as np
 
-from voice_mode.core import play_system_audio
-from voice_mode.tools.converse import should_wait, should_repeat, WAIT_PHRASES, REPEAT_PHRASES
+from python_voicemode.core import play_system_audio
+from python_voicemode.tools.converse import should_wait, should_repeat, WAIT_PHRASES, REPEAT_PHRASES
 
 
 class TestPlaySystemAudio:
@@ -22,9 +22,9 @@ class TestPlaySystemAudio:
     @pytest.mark.asyncio
     async def test_play_system_audio_with_existing_file(self):
         """Test that system audio plays successfully when audio file exists."""
-        with patch('voice_mode.core.Path') as mock_path, \
-             patch('voice_mode.core.AudioSegment') as mock_audio_segment, \
-             patch('voice_mode.core.NonBlockingAudioPlayer') as mock_player:
+        with patch('python_voicemode.core.Path') as mock_path, \
+             patch('python_voicemode.core.AudioSegment') as mock_audio_segment, \
+             patch('python_voicemode.core.NonBlockingAudioPlayer') as mock_player:
 
             # Mock file existence
             mock_file = MagicMock()
@@ -51,7 +51,7 @@ class TestPlaySystemAudio:
     @pytest.mark.asyncio
     async def test_play_system_audio_fallback_to_tts(self):
         """Test that system audio falls back to TTS when audio file doesn't exist."""
-        with patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
 
             # Mock TTS success
             mock_tts.return_value = (True, {"ttfa": 0.5}, {"voice": "af_sky"})
@@ -70,7 +70,7 @@ class TestPlaySystemAudio:
     @pytest.mark.asyncio
     async def test_play_system_audio_no_fallback_text(self):
         """Test that system audio returns False when no audio file and no fallback text."""
-        with patch('voice_mode.core.Path') as mock_path:
+        with patch('python_voicemode.core.Path') as mock_path:
 
             # Mock file doesn't exist - need to mock all extensions
             def mock_exists(self):
@@ -92,8 +92,8 @@ class TestPlaySystemAudio:
     @pytest.mark.asyncio
     async def test_play_system_audio_file_playback_error_fallback(self):
         """Test that TTS fallback works when audio file playback fails."""
-        with patch('voice_mode.core.NonBlockingAudioPlayer') as mock_player, \
-             patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.core.NonBlockingAudioPlayer') as mock_player, \
+             patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
 
             # Mock player to raise exception during playback
             mock_player_instance = MagicMock()
@@ -189,7 +189,7 @@ class TestWaitCommandIntegration:
         assert should_wait(response_text) is True
 
         # Test with actual play_system_audio using mocks
-        with patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
             mock_tts.return_value = (True, {"ttfa": 0.5}, {"voice": "af_sky"})
 
             # Call play_system_audio with non-existent file to trigger fallback
@@ -202,7 +202,7 @@ class TestWaitCommandIntegration:
     @pytest.mark.asyncio
     async def test_wait_command_plays_ready_audio_after_delay(self):
         """Test that ready-to-listen audio plays after wait period."""
-        with patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
             mock_tts.return_value = (True, {"ttfa": 0.5}, {"voice": "af_sky"})
 
             # Simulate the full wait flow from converse.py
@@ -229,7 +229,7 @@ class TestRepeatCommandIntegration:
         assert should_repeat(response_text) is True
 
         # Test with actual play_system_audio using mocks
-        with patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
             mock_tts.return_value = (True, {"ttfa": 0.5}, {"voice": "af_sky"})
 
             # Call play_system_audio with non-existent file to trigger fallback
@@ -242,7 +242,7 @@ class TestRepeatCommandIntegration:
     @pytest.mark.asyncio
     async def test_repeat_command_multiple_times(self):
         """Test that repeat command can be triggered multiple times."""
-        with patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
             mock_tts.return_value = (True, {"ttfa": 0.5}, {"voice": "af_sky"})
 
             # Simulate multiple repeat requests
@@ -279,7 +279,7 @@ class TestEdgeCases:
     @pytest.mark.asyncio
     async def test_tts_fallback_failure_handling(self):
         """Test handling when both audio file and TTS fallback fail."""
-        with patch('voice_mode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
+        with patch('python_voicemode.simple_failover.simple_tts_failover', new_callable=AsyncMock) as mock_tts:
 
             # Mock TTS failure
             mock_tts.return_value = (False, None, None)

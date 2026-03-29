@@ -1,8 +1,8 @@
-"""Tests for voice_mode.connect.types."""
+"""Tests for python_voicemode.connect.types."""
 
 from datetime import datetime
 
-from voice_mode.connect.types import (
+from python_voicemode.connect.types import (
     ConnectState,
     InboxMessage,
     Presence,

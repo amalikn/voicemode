@@ -1,5 +1,5 @@
 """
-Unit tests for voice_mode.credential_store module.
+Unit tests for python_voicemode.credential_store module.
 
 Tests KeyringStore, PlaintextStore, migration, and fallback behavior.
 """
@@ -9,8 +9,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import voice_mode.credential_store as cred_mod
-from voice_mode.credential_store import (
+import python_voicemode.credential_store as cred_mod
+from python_voicemode.credential_store import (
     KEYRING_SERVICE,
     KEYRING_USERNAME,
     KeyringStore,
@@ -44,9 +44,9 @@ class TestPlaintextStore:
         cred_dir = tmp_path / ".voicemode"
         cred_file = cred_dir / "credentials"
         migrated_file = cred_dir / "credentials.migrated"
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_DIR", cred_dir)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_FILE", cred_file)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_DIR", cred_dir)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_FILE", cred_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
         return cred_dir
 
     def test_save_creates_directory(self, temp_credentials_dir):
@@ -315,9 +315,9 @@ class TestMigration:
         cred_dir.mkdir(parents=True)
         cred_file = cred_dir / "credentials"
         migrated_file = cred_dir / "credentials.migrated"
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_DIR", cred_dir)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_FILE", cred_file)
-        monkeypatch.setattr("voice_mode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_DIR", cred_dir)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_FILE", cred_file)
+        monkeypatch.setattr("python_voicemode.credential_store.CREDENTIALS_MIGRATED_FILE", migrated_file)
         return cred_dir
 
     def test_migrates_plaintext_to_keyring(self, temp_credentials_dir):
@@ -389,14 +389,14 @@ class TestGetCredentialStore:
 
     def test_keyring_when_configured_and_viable(self, monkeypatch):
         monkeypatch.setenv("VOICEMODE_CREDENTIAL_STORE", "keyring")
-        with patch("voice_mode.credential_store._keyring_backend_is_viable", return_value=True), \
-             patch("voice_mode.credential_store._migrate_plaintext_to_keyring"):
+        with patch("python_voicemode.credential_store._keyring_backend_is_viable", return_value=True), \
+             patch("python_voicemode.credential_store._migrate_plaintext_to_keyring"):
             store = get_credential_store()
             assert isinstance(store, KeyringStore)
 
     def test_fallback_to_plaintext_when_keyring_unavailable(self, monkeypatch):
         monkeypatch.setenv("VOICEMODE_CREDENTIAL_STORE", "keyring")
-        with patch("voice_mode.credential_store._keyring_backend_is_viable", return_value=False):
+        with patch("python_voicemode.credential_store._keyring_backend_is_viable", return_value=False):
             store = get_credential_store()
             assert isinstance(store, PlaintextStore)
 
